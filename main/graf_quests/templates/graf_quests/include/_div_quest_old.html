@@ -1,0 +1,63 @@
+<div class="card text-center">
+    <div class="card-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div class="d-grid">
+                        <button type="button" onclick="location.replace(&quot;{% url 'quest' quest.id %}&quot;);"
+                                class="btn btn-lg btn-block">{{quest.read_points }}
+                        </button>
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div class="d-grid">
+                        {% if quest.character.id %}
+                        <button type="submit"  onclick="delete_quest(&quot;{% url 'delete_quest' quest.id quest.character.id%}&quot;);"
+                                class="btn btn-danger">
+                            X
+                        </button>
+                        {% else %}
+                        <button type="submit"  onclick="delete_quest(&quot;{% url 'delete_quest' quest.id 0%}&quot;);"
+                                class="btn btn-danger">
+                            X
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <p class="card-text">
+            {% if quest.description %}
+            {{ quest.description }}
+            {% endif %}
+        </p>
+    </div>
+    {% if quest.points %}
+    <div class="d-grid">
+        <button class="btn quest_point_block" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseExample{{ quest.id }}"
+                aria-expanded="false" aria-controls="collapseExample{{ quest.id }}">
+            Шаги квеста
+        </button>
+    </div>
+    {% endif %}
+    <div class="collapse container quest_point_block" id="collapseExample{{ quest.id }}">
+        <br>
+        {% for point in quest.points %}
+        <div class="card text-center">
+            <div class="card-header">
+                ({{point.step}}) {{ point.character }}
+            </div>
+            <div class="card-body">
+                <p class="card-text">{{ point.description }} </p>
+            </div>
+        </div>
+        <br>
+        {% endfor %}
+    </div>
+</div>
+<br>

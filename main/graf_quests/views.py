@@ -12,7 +12,7 @@ from main.settings import BASE_DIR, DEBUG
 
 def index(request, game_id=1):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
 
     characters = Character.objects.filter(game__id=game_id)
 
@@ -33,7 +33,8 @@ def index(request, game_id=1):
 
 def get_character(request, character_id):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
+
     character = Character.objects.get(id=character_id)
 
     if request.method == "POST":
@@ -75,7 +76,7 @@ def get_character(request, character_id):
 
 def get_quest(request, quest_id):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
 
     quest = Quest.objects.get(id=quest_id)
     quest_point_formset_factory = modelformset_factory(model=QuestPoint, form=QuestPointForm, extra=1)
@@ -115,14 +116,23 @@ def get_quest(request, quest_id):
             character = quest_points[i].character if i < len(quest_points) else None
             points.append({"form": form, "id": point_id, "character": character})
 
-        context = {"quest_form": quest_form, "points": points, "quest": quest, "formset": formset}
+        points_table = {}
+        for point in quest_points:
+            points_table[int(point.step)] = points_table.get(int(point.step), []) + [point]
+
+        points_table = [points_table[key] for key in sorted(points_table.keys())]
+        print(*points_table, sep="\n")
+
+        context = {"quest_form": quest_form, "points": points, "quest": quest, "formset": formset,
+                   "points_table": points_table}
 
     return render(request, "graf_quests/get_quest.html", context=context)
 
 
 def create_quest(request, character_id):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
+
     character = Character.objects.get(id=character_id)
     quest = Quest(game=character.game, title="Название", description="Описание")
     quest.save()
@@ -133,7 +143,8 @@ def create_quest(request, character_id):
 
 def delete_quest(request, quest_id, character_id):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
+
     quest = Quest.objects.get(id=quest_id)
     game_id = quest.game.id
     quest.delete()
@@ -145,7 +156,8 @@ def delete_quest(request, quest_id, character_id):
 
 def delete_quest_point(request, quest_point_id):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
+
     quest_point = QuestPoint.objects.get(id=quest_point_id)
     quest_id = quest_point.quest.id
     quest_point.delete()
@@ -154,7 +166,8 @@ def delete_quest_point(request, quest_point_id):
 
 def get_all_quests(request, game_id):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
+
     quests = Quest.objects.filter(game__id=game_id)
     contex = {"quests": quests}
     return render(request, "graf_quests/all_quests.html", context=contex)
@@ -162,7 +175,8 @@ def get_all_quests(request, game_id):
 
 def get_all_characters_div(request):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
+
     characters = Character.objects.all()
     resp_data = {}
     for c in characters:
@@ -173,7 +187,7 @@ def get_all_characters_div(request):
 
 def all_links(request, game_id):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
 
     links = Link.objects.filter(game__id=game_id).order_by("character_1__id")
     contex = {"links": links}
@@ -182,20 +196,23 @@ def all_links(request, game_id):
 
 def edit_link(request):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
     link_id = request.POST["link_id"]
     text = request.POST["text"]
 
     l = Link.objects.get(id=link_id)
     l.text = text
 
-    l.save()
+    if text == "" or text is None:
+        l.delete()
+    else:
+        l.save()
     return HttpResponse("success")
 
 
 def set_coord_by_id(request):
     if not request.user.is_authenticated:
-        return redirect("/admin/login/?next=/admin/")
+        return redirect("login")
     character_id = request.POST["character_id"]
 
     c = Character.objects.filter(pk=character_id).first()
@@ -203,5 +220,34 @@ def set_coord_by_id(request):
     c.y = int(float(request.POST["y"]))
 
     c.save()
+
+    return HttpResponse("success")
+
+
+def create_character_link(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    first_character_id = int(request.POST["first_character_id"])
+    second_character_id = int(request.POST["second_character_id"])
+    text = request.POST["text"]
+
+    first_character_id, second_character_id = (min(first_character_id, second_character_id),
+                                               max(first_character_id, second_character_id))
+
+    links = Link.objects.filter(character_1__id=first_character_id,
+                                character_2__id=second_character_id)
+    if len(links) > 0:
+        links[0].delete()
+    elif text == "" or text is None:
+        pass
+    else:
+        character_1 = Character.objects.get(id=first_character_id)
+        character_2 = Character.objects.get(id=second_character_id)
+        link = Link(character_1=character_1,
+                    character_2=character_2,
+                    text=text,
+                    game=character_1.game)
+        link.save()
 
     return HttpResponse("success")

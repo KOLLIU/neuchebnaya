@@ -20,6 +20,7 @@
 
 
 
+
 </script>
 
 {% endblock %}
@@ -35,7 +36,9 @@
 </svg>
 <div>
     {% for character_id, character_info in characters.items %}
-    <div class="character character_block card" id="{{ character_id }}">
+    <div class="character character_block card" id="{{ character_id }}"
+         ondblclick="character_ondblclick('{{character_id}}')"
+         onclick="character_onclick('{{character_id}}')">
         <div class="card-headder">
             <b>
                 {% if character_info.character.name and character.role%}

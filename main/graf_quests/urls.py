@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import index, get_all_characters_div, set_coord_by_id, get_character, get_quest, delete_quest_point, \
-    create_quest, get_all_quests, delete_quest, edit_link, all_links
+    create_quest, get_all_quests, delete_quest, edit_link, all_links, create_character_link
 
 urlpatterns = [path("<int:game_id>", index, name="graf_quests"),
 
@@ -18,6 +18,7 @@ urlpatterns = [path("<int:game_id>", index, name="graf_quests"),
                # links
                path("edit_link", edit_link, name="edit_link"),
                path("all_links/<int:game_id>", all_links, name="all_links"),
+               path("create_character_link", create_character_link, name="create_character_link"),
 
                # graf
                path("get_all_characters_div", get_all_characters_div, name="get_all_characters_div"),

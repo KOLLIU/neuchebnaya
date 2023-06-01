@@ -26,6 +26,10 @@ body {
     border: solid black 1px;
 }
 
+.character_active_block {
+    background-color: #3C68FF;
+}
+
 .link_block {
     background-color: #92FAB5;
     border: solid black 1px;
