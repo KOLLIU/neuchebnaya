@@ -1,0 +1,29 @@
+{% extends 'base.html'%}
+
+{% block links %}{% endblock %}
+
+
+{% block main %}
+<div class="container">
+
+    <form action="{% url 'login'%}" method="post" id="register">
+        {% csrf_token %}
+
+        <div class="form-control">
+            {% for field in form %}
+
+
+            <b>{{ field.label }}: </b>
+            {{ field }}
+
+
+            {% endfor %}
+
+            <div class="d-grid">
+                <br><button type="submit" class="btn btn-lg btn-success">Авторизация</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+{% block links%}
+<script src="{% static 'graf_quests/js/ajax_googleapis_jquery_1_10_2_jquery_min_js.js'%}"></script>
+<script src="{% static 'graf_quests/js/ajax_aspnetcdn_com_ajax_jquery_ui_1_10_3_jquery_ui_min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'graf_quests/css/main.css'%}">
+
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <form action="{% url 'quest' quest.id %}" method="post" id="quest">
+
+        {% csrf_token %}
+
+        {% for field in quest_form %}
+        <div class="form-control quest_block text-center">
+            <b>{{ field.label_tag }}</b>
+            {{ field }}
+            <div class="invalid-feedback">
+                {{ field.errors }}
+            </div>
+        </div>
+        {% endfor %}
+        <br>
+
+        {{ formset.management_form }}
+        {% for point in points %}
+        <div class="form-control quest_point_block">
+            <div class="row">
+
+                <div class="col-lg-3 col-md-12 col-sm-12">
+                    <b>{{ point.form.step.label_tag }}</b>
+                    {{ point.form.step }}
+
+
+                    {% if point.character %}
+                    <br><b><a href="{% url 'character' point.character.id%}"
+                              class="btn character_block btn-sm"><-</a>{{ point.form.character.label_tag }}</b>
+                    {% else %}
+                    <br><b>{{ point.form.character.label_tag }}</b>
+                    {% endif %}
+
+                    {{ point.form.character }}
+                </div>
+
+                <div class="col-lg-8 col-md-12 col-sm-12 text-center">
+                    <b>{{ point.form.description.label_tag }}</b>
+                    {{ point.form.description }}
+                </div>
+                <div class="col-lg-1 col-md-12 col-sm-12">
+                    <button type="button"
+                            onclick="location.replace(&quot;{% url 'delete_quest_point' point.id%}&quot;);"
+                            class="btn btn-danger btn-lg btn-block">X
+                    </button>
+                </div>
+            </div>
+
+
+            {% for field in point.form.hidden_fields %}
+            {{ field }}
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="d-grid">
+            <button type="submit" class="btn quest_block btn-lg">Сохранить</button>
+        </div>
+    </form>
+
+</div>
+{% endblock main %}

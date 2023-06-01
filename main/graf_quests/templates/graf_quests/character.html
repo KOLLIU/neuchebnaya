@@ -1,0 +1,96 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'graf_quests/css/main.css'%}">
+<script src="{% static 'graf_quests/js/utils.js' %}"></script>
+
+<script src="{% static 'graf_quests/js/ajax_googleapis_jquery_1_10_2_jquery_min_js.js'%}"></script>
+<script src="{% static 'graf_quests/js/ajax_aspnetcdn_com_ajax_jquery_ui_1_10_3_jquery_ui_min.js' %}"></script>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+
+    <form action="{% url 'character' character.id %}" method="post" class="text-center">
+        {% csrf_token %}
+
+        {% for field in form %}
+        <div class="form-control character_block">
+            <b>{{ field.label_tag }}</b>
+            {{ field }}
+            <div class="invalid-feedback">
+                {{ field.errors }}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="d-grid">
+            <button type="submit" class=" btn character_block"><h4>Сохранить</h4></button>
+            <br>
+        </div>
+    </form>
+
+    {% if character.is_start %}
+    <div class="d-grid">
+        <button class="btn quest_block" type="button" data-bs-toggle="collapse"
+                data-bs-target="#start_quests_collapse"
+                aria-expanded="false" aria-controls="start_quests_collapse">
+            <b><h4>Начинает квесты: {{ character.start_quests|length }}</h4></b>
+        </button>
+    </div>
+    <div class="collapse container quest_block" id="start_quests_collapse">
+        <br>
+        {% for quest in character.start_quests %}
+        {% include 'graf_quests/include/_div_quest.html' %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if character.is_all %}
+    {% if character.is_start %}<br>{% endif %}
+    <div class="d-grid">
+        <button class="btn quest_block" type="button" data-bs-toggle="collapse"
+                data-bs-target="#all_quests_collapse"
+                aria-expanded="false" aria-controls="all_quests_collapse">
+            <b><h4>{% if character.is_start %}Другие квесты: {% else %} Участвует в квестах: {% endif %}
+                {{character.all_quests|length }}</h4></b>
+        </button>
+    </div>
+    <div class="collapse container quest_block" id="all_quests_collapse">
+        <br>
+        {% for quest in character.all_quests %}
+        {% include 'graf_quests/include/_div_quest.html' %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="d-grid ">
+        {% if character.is_all or character.is_start %}<br>{% endif %}
+        <a href="{% url 'create_quest' character.id %}" class="btn quest_block">
+            <h4>Добавить квест</h4>
+        </a>
+    </div>
+
+
+    {% if character.links|length > 0 %}
+    {% if character.is_all or character.is_start %}<br>{% endif %}
+    <div class="d-grid">
+        <button class="btn link_block" type="button" data-bs-toggle="collapse"
+                data-bs-target="#links_collapse"
+                aria-expanded="false" aria-controls="links_collapse">
+            <b><h4>Связи: </h4></b>
+        </button>
+    </div>
+    <div class="collapse container link_block" id="links_collapse">
+        <br>
+        {% for link in character.links %}
+        {% include 'graf_quests/include/_div_link.html' %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+</div>
+{% endblock main %}

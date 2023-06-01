@@ -1,0 +1,44 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+{% block title%}{{event.title}}{% endblock %}
+
+
+{% block links%}
+<link rel="stylesheet" href="{% static 'setka/css/main.css'%}">
+{% endblock %}
+
+
+{% block main %}
+<div class="container">
+    <div class="card">
+        <div class="card-body" style="text-align: center">
+            <h5 class="card-title" style="background-color: #{{event.ready.color}}">{{event.title}}</h5>
+            <p class="card-text">{{event.description}}</p>
+
+            {%if event.responsible%}<p class="card-text">
+            Ответственный: {{event.responsible.first_name}} {{event.responsible.last_name}}</p>
+            {%endif%}
+
+            {%if event.discussion%}
+            <div class="d-grid">
+                <a href="{{event.discussion}}" class="btn btn-primary">Обсуждение</a>
+            </div>
+            {%endif%}
+
+            {%if event.chat%}
+            <div class="d-grid"><a href="{{event.chat}}" class="btn btn-success">Чат</a></div>
+            {%endif%}
+
+            {%if event.doc%}
+            <div class="d-grid"><a href="{{event.doc}}" class="btn btn-secondary">Документ</a></div>
+            {%endif%}
+
+        </div>
+    </div>
+</div>
+{% endblock main %}
+
+{% block final %}
+{% endblock %}

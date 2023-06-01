@@ -1,0 +1,20 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+{% block links%}
+<link rel="stylesheet" href="{% static 'graf_quests/css/main.css'%}">
+<script src="{% static 'graf_quests/js/utils.js' %}"></script>
+
+<script src="{% static 'graf_quests/js/ajax_googleapis_jquery_1_10_2_jquery_min_js.js'%}"></script>
+<script src="{% static 'graf_quests/js/ajax_aspnetcdn_com_ajax_jquery_ui_1_10_3_jquery_ui_min.js' %}"></script>
+{% endblock %}
+
+{% block main %}
+<div class="container link_block">
+    <br>
+    {% for link in links %}
+    {% include 'graf_quests/include/_div_link.html' %}
+    {% endfor %}
+</div>
+{% endblock %}

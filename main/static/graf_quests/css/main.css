@@ -1,0 +1,32 @@
+.character {
+    font-size: 1em;
+    border: thin solid black;
+    width: 15vmin;
+    text-align: center;
+    padding:10px,
+    display: block;
+}
+
+body {
+    background-color: #333333;
+}
+
+.quest_block {
+    background-color: #B76FFF;
+    border: solid black 1px;
+}
+
+.quest_point_block {
+    background-color: #FAE688;
+    border: solid black 1px;
+}
+
+.character_block {
+    background-color: #9CC8FF;
+    border: solid black 1px;
+}
+
+.link_block {
+    background-color: #92FAB5;
+    border: solid black 1px;
+}

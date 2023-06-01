@@ -1,0 +1,66 @@
+<div class="card">
+    <div class="card-header">
+        <div class="row text-center">
+            <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                {% if link.pair == link.character_2 %}
+                {% else %}
+                <div class="d-grid">
+                    <a href="{% url 'character' link.character_1.id %}" class="btn character_block">
+
+                        {% if link.character_1.role or link.character_1.name %}
+
+                        {% if link.character_1.role %}
+
+                        {{ link.character_1.role }}
+                        {% else %}
+                        {{ link.character_1.name }}
+
+                        {% endif %}
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                <div class="d-grid">
+                    {% if link.pair %}
+                    <button class="btn link_block"
+                            onclick="edit_link({{link.id}}, &quot;{{link.text}}&quot;, &quot;{% url 'edit_link'%}&quot;, &quot;{% url 'character' character.id%}&quot;);">
+                        {{ link.text }}
+                    </button>
+                    {% else %}
+                    <button class="btn link_block"
+                            onclick="edit_link({{link.id}}, &quot;{{link.text}}&quot;, &quot;{% url 'edit_link'%}&quot;, &quot;{% url 'all_links' link.character_1.id%}&quot;);">
+                        {{ link.text }}
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                {% if link.pair == link.character_2 or not link.pair %}
+                <div class="d-grid">
+                    <a href="{% url 'character' link.character_2.id %}" class="btn character_block">
+
+                        {% if link.character_2.role or link.character_2.name %}
+
+                        {% if link.character_2.role %}
+
+                        {{ link.character_2.role }}
+                        {% else %}
+                        {{ link.character_2.name }}
+
+                        {% endif %}
+                        {% endif %}
+
+                    </a>
+                </div>
+                {% else %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<br>

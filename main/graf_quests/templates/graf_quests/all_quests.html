@@ -1,0 +1,17 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+{% block links%}
+<link rel="stylesheet" href="{% static 'graf_quests/css/main.css'%}">
+<script src="{% static 'graf_quests/js/utils.js' %}"></script>
+{% endblock %}
+
+{% block main %}
+<div class="container quest_block">
+    <br>
+    {% for quest in quests %}
+    {% include 'graf_quests/include/_div_quest.html' %}
+    {% endfor %}
+</div>
+{% endblock %}

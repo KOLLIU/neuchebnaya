@@ -1,0 +1,80 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+
+{% block links%}
+
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta http-equiv="expires" content="0"/>
+
+<link rel="stylesheet"
+      href="{% static 'graf_quests/css/ajax_aspnetcdn_com_ajax_jquery_ui_1_10_3_themes_sunny_jquery_ui.css' %}">
+<link rel="stylesheet" href="{% static 'graf_quests/css/main.css'%}">
+
+<script src="{% static 'graf_quests/js/test.js' %}"></script>
+
+<script>
+    var game_id = {{game_id}};
+
+
+
+</script>
+
+{% endblock %}
+
+
+{% block main %}
+
+<svg height="1000vh" width="1000vw" id="main_svg">
+    {% for link in links %}
+    <line x1="0" y1="0" x2="500" y2="500" style="stroke:rgb(255,255,255);stroke-width:2; stroke-opacity: 0.2"
+          class="{{ link.character_1.id }} {{ link.character_2.id }}"/>
+    {% endfor %}
+</svg>
+<div>
+    {% for character_id, character_info in characters.items %}
+    <div class="character character_block card" id="{{ character_id }}">
+        <div class="card-headder">
+            <b>
+                {% if character_info.character.name and character.role%}
+                <a href="{% url 'character' character_id %}" style="color: black; text-decoration: none;">
+                    {{ character_info.character.name }}<br>{{ character_info.character.role }}<br>
+                </a>
+
+                {% elif character_info.character.name %}
+                <a href="{% url 'character' character_id %}" style="color: black; text-decoration: none;">
+                    {{ character_info.character.name }}<br>
+                </a>
+
+                {% elif character_info.character.role %}
+                <a href="{% url 'character' character_id %}" style="color: black; text-decoration: none;">
+                    {{ character_info.character.role }}<br>
+                </a>
+
+                {% else %}
+                <a href="{% url 'character' character_id %}" style="color: black; text-decoration: none;">
+                    Дефолтыч<br>
+                </a>
+                {% endif%}
+                {% if character_info.start_quests > 0 %} <span>Н:{{character_info.start_quests}}</span> {% endif%}
+                {% if character_info.in_quests > 0 %}У: {{character_info.in_quests}}{% endif%}
+            </b>
+        </div>
+
+        <div class="card-body">
+            <p class="card-text">{{ character_info.character.description }}</p>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+
+
+{% block final %}
+<script src="{% static 'graf_quests/js/final.js' %}"></script>
+{% endblock %}
+
+
+{% endblock main %}

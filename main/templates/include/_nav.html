@@ -1,0 +1,49 @@
+{% load graf_quests_tags %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        {% if user.id == 1 or user.id == 6%}
+        <a class="navbar-brand" href="/admin">Админка</a>
+        {% endif %}
+
+        <a class="navbar-brand" href="{% url 'main_page_url' %}">Сетка</a>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav">
+                {% get_games_tag as games%}
+                <div class="dropdown">
+                    {% for game in games %}
+                    <button class="btn btn-secondary dropdown-toggle-split" type="button"
+                            id="dropdownMenuButton{{ game.id }}"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">{{ game.title }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ game.id }}">
+                        <li><a class="dropdown-item" href="{% url 'graf_quests' game.id %}">Граф</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'all_quests' game.id %}">Все квесты</a></li>
+                        <li><a class="dropdown-item" href="{% url 'all_links' game.id %}">Все связи</a></li>
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <span class="navbar-text ms-auto">
+            {% if user.is_authenticated %}
+            {{ user.username }}
+            <a href="{% url 'logout' %}">Выйти</a>
+            {% else %}
+            <a href="{% url 'register' %}">Регистрация</a>
+            /
+            <a href="{% url 'login' %}">Авторизация</a>
+            {% endif %}
+        </span>
+    </div>
+</nav>
