@@ -29,7 +29,7 @@
         {{ formset.management_form }}
         {% for point in points %}
         <div class="form-control quest_point_block">
-            <div class="row">
+            <div class="row" id="point_{{point.id}}">
 
                 <div class="col-lg-3 col-md-12 col-sm-12">
                     <b>{{ point.form.step.label_tag }}</b>
@@ -69,6 +69,28 @@
             <button type="submit" class="btn quest_block btn-lg">Сохранить</button>
         </div>
     </form>
-
 </div>
+<br>
+
+<div>
+    {% for points_list in points_table %}
+    <div style="display: flex; text-align: center; justify-content: space-evenly;
+    width: 100vw;">
+        {% for point in points_list%}
+        <a href="#point_{{point.id}}">
+            <div style="display: inline-block; height: {{points_height}}vw; width: {{points_width}}vw;
+        border-radius: {{points_font_size}}vw;
+        font-size: {{points_font_size}}vw;" class="quest_point_block">
+                {{point.step}}<br>
+                <b>{{point.character}}</b> <br>
+                <p>{{point.description}}</p>
+
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    <br>
+    {% endfor %}
+</div>
+
 {% endblock main %}

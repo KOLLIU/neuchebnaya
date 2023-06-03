@@ -14,6 +14,7 @@ class Club(models.Model):
     discussion = models.CharField(max_length=256, default="", null=True, blank=True, verbose_name="Обсуждение")
     doc = models.CharField(max_length=256, default="", null=True, blank=True, verbose_name="Док")
     ready = models.ForeignKey(ReadyClub, null=True, blank=True, on_delete=models.SET_NULL)
+    description = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Клуб"

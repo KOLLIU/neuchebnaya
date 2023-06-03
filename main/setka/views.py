@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
@@ -72,6 +73,6 @@ def set_event_day_by_id(request):
 def event(request, event_type, event_id):
     event = Game.objects.get(id=event_id) if event_type == "game" else Club.objects.get(id=event_id)
 
-    context = {"event": event}
+    context = {"event": event, "event_type": event_type}
 
     return render(request, "setka/event.html", context=context)

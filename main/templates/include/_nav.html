@@ -23,6 +23,10 @@
                             aria-expanded="false">{{ game.title }}
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ game.id }}">
+                        <li><a class="dropdown-item" href="{% url 'event' 'game' game.id %}">Главная</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li><a class="dropdown-item" href="{% url 'graf_quests' game.id %}">Граф</a></li>
                         <li>
                             <hr class="dropdown-divider">
@@ -40,8 +44,10 @@
             {{ user.username }}
             <a href="{% url 'logout' %}">Выйти</a>
             {% else %}
+            {%comment%}
             <a href="{% url 'register' %}">Регистрация</a>
             /
+            {% endcomment %}
             <a href="{% url 'login' %}">Авторизация</a>
             {% endif %}
         </span>

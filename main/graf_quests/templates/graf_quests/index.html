@@ -41,7 +41,7 @@
          onclick="character_onclick('{{character_id}}')">
         <div class="card-headder">
             <b>
-                {% if character_info.character.name and character.role%}
+                {% if character_info.character.name and character_info.character.role%}
                 <a href="{% url 'character' character_id %}" style="color: black; text-decoration: none;">
                     {{ character_info.character.name }}<br>{{ character_info.character.role }}<br>
                 </a>

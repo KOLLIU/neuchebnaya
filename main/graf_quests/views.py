@@ -121,10 +121,19 @@ def get_quest(request, quest_id):
             points_table[int(point.step)] = points_table.get(int(point.step), []) + [point]
 
         points_table = [points_table[key] for key in sorted(points_table.keys())]
-        print(*points_table, sep="\n")
+        max_points_len = max([len(points_list) for points_list in points_table])
+        max_points_text_len = max([max([len(point.description) for point in points_list])
+                                   for points_list in points_table])
+        points_width = 100 / (max_points_len + 1)
+
+        points_font_size = points_width / 15
+
+        points_height = max_points_text_len / (points_width / points_font_size / 1.8)
 
         context = {"quest_form": quest_form, "points": points, "quest": quest, "formset": formset,
-                   "points_table": points_table}
+                   "points_table": points_table, "points_width": str(points_width),
+                   "points_height": str(points_height),
+                   "points_font_size": str(points_font_size)}
 
     return render(request, "graf_quests/get_quest.html", context=context)
 
