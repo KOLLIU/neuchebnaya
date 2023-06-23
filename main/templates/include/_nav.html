@@ -15,8 +15,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav">
                 {% get_games_tag as games%}
+
+                {% for game in games %}
                 <div class="dropdown">
-                    {% for game in games %}
                     <button class="btn btn-secondary dropdown-toggle-split" type="button"
                             id="dropdownMenuButton{{ game.id }}"
                             data-bs-toggle="dropdown"
@@ -33,9 +34,15 @@
                         </li>
                         <li><a class="dropdown-item" href="{% url 'all_quests' game.id %}">Все квесты</a></li>
                         <li><a class="dropdown-item" href="{% url 'all_links' game.id %}">Все связи</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'create_character' game.id %}">Создать персонажа</a>
+                        </li>
                     </ul>
-                    {% endfor %}
                 </div>
+                {% endfor %}
+
             </div>
         </div>
 

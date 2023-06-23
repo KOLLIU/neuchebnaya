@@ -29,7 +29,9 @@
             <h5 class="card-title" style="background-color: #{{event.ready.color}}">{{event.title}}</h5>
 
             {% autoescape off %}
-            {% if event.description%}<p class="card-text">{{event.description}}</p>{%endif%}
+            {% if event.description%}
+            <pre class="card-text" style="white-space: pre-wrap;">{{event.description}}</pre>
+            {%endif%}
             {% endautoescape %}
 
             {%if event.responsible%}<p class="card-text">

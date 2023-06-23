@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from graf_quests.forms import CharacterForm, QuestForm, QuestPointForm
-from graf_quests.models import Character, Link, QuestPoint, Quest
+from graf_quests.models import Character, Link, QuestPoint, Quest, Game
 from main.settings import BASE_DIR, DEBUG
 
 
@@ -72,6 +72,13 @@ def get_character(request, character_id):
         context = {"character": character, "form": form}
 
         return render(request, "graf_quests/character.html", context=context)
+
+
+def create_character(request, game_id):
+    game = Game.objects.get(id=game_id)
+    character = Character(game=game)
+    character.save()
+    return redirect("character", character.id)
 
 
 def get_quest(request, quest_id):

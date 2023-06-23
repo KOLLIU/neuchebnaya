@@ -28,10 +28,17 @@ class QuestForm(forms.ModelForm):
 class QuestPointForm(forms.ModelForm):
     class Meta:
         model = QuestPoint
-        fields = ["step", "character", "description", ]
+        fields = ["step", "character", "description", "stuff", "todo"]
         widgets = {
-            "description": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
+            "description": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "stuff": forms.TextInput(attrs={"class": "form-control"}),
+            "todo": forms.TextInput(attrs={"class": "form-control"}),
         }
+    #
+    # def __init__(self, *args, **kwargs):
+    #     super(QuestPointForm, self).__init__(*args, **kwargs)
+    #     if self.quest:
+    #         self.fields["character"].queryset = Character.objects.filter(game=self.quest.game)
 
 # class CharacterFormOLD(forms.Form):
 #     game = forms.ModelChoiceField(queryset=Game.objects.all(), empty_label="Игра", label="Игра",

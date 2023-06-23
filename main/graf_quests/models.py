@@ -64,12 +64,14 @@ class Character(models.Model):
     class Meta:
         verbose_name = "Персонаж"
         verbose_name_plural = "Персонажи"
+        ordering = ["game", "role", "name"]
 
     def __str__(self):
-        return str(self.name) if self.name else str(self.role)
+        return f"({str(self.game)[:3:]}) {self.role + '' if self.role else ''}{self.name if self.name else ''}"
 
     def get_absolute_url(self):
         return reverse("character", kwargs={"character_id": self.pk})
+
 
 
 class Link(models.Model):
@@ -110,9 +112,11 @@ class Quest(models.Model):
 
 class QuestPoint(models.Model):
     quest = models.ForeignKey("Quest", on_delete=models.CASCADE, verbose_name="Квест")
-    character = models.ForeignKey("Character", on_delete=models.CASCADE, verbose_name="Персонаж")
+    character = models.ForeignKey("Character", on_delete=models.CASCADE, verbose_name="Персонаж", null=True, blank=True)
     description = models.TextField(default="", verbose_name="Описание")
     step = models.FloatField(verbose_name="Шаг")
+    stuff = models.CharField(max_length=256, verbose_name="Стафф", default=None, null=True, blank=True)
+    todo = models.CharField(max_length=256, verbose_name="Что доделать", default=None, null=True, blank=True)
 
     class Meta:
         verbose_name = "Часть квеста"

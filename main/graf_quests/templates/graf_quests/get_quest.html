@@ -50,12 +50,26 @@
                     <b>{{ point.form.description.label_tag }}</b>
                     {{ point.form.description }}
                 </div>
+
                 <div class="col-lg-1 col-md-12 col-sm-12">
                     <button type="button"
                             onclick="location.replace(&quot;{% url 'delete_quest_point' point.id%}&quot;);"
                             class="btn btn-danger btn-lg btn-block">X
                     </button>
                 </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-12 col-sm-12">
+                        <b>{{ point.form.stuff.label_tag }}</b>
+                        {{ point.form.stuff }}
+                    </div>
+
+                    <div class="col-lg-6 col-md-12 col-sm-12">
+                        <b>{{ point.form.todo.label_tag }}</b>
+                        {{ point.form.todo }}
+                    </div>
+                </div>
+
             </div>
 
 
@@ -63,6 +77,7 @@
             {{ field }}
             {% endfor %}
         </div>
+        <br>
         {% endfor %}
 
         <div class="d-grid">
@@ -72,7 +87,7 @@
 </div>
 <br>
 
-<div>
+<div id="points_graf">
     {% for points_list in points_table %}
     <div style="display: flex; text-align: center; justify-content: space-evenly;
     width: 100vw;">
