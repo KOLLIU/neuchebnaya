@@ -1,2 +1,4 @@
 django
 django-environ
+psycopg2-binary
+django-dump-load-utf8

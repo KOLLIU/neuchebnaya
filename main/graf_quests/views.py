@@ -31,6 +31,33 @@ def index(request, game_id=1):
     return render(request, "graf_quests/index.html", context=context)
 
 
+def set_character_info(character):
+    character_id = character.id
+
+    quest_points = list(QuestPoint.objects.filter(character=character))
+    quest_points = sorted(quest_points, key=lambda x: x.step)
+    quests_start_id = set([x.quest.id for x in quest_points if x.step == 0])
+    quests_all_id = set([x.quest.id for x in quest_points])
+    quests_all_id -= quests_start_id
+
+    start_quests = [Quest.objects.get(id=quest_id) for quest_id in quests_start_id]
+    for quest in start_quests:
+        quest.character = character
+    all_quests = [Quest.objects.get(id=quest_id) for quest_id in quests_all_id]
+    for quest in all_quests:
+        quest.character = character
+
+    character.start_quests = start_quests
+    character.is_start = len(start_quests) > 0
+    character.all_quests = all_quests
+    character.is_all = len(all_quests) > 0
+
+    links = Link.objects.filter(Q(character_1=character_id) | Q(character_2=character_id))
+    for link in links:
+        link.pair = link.character_1 if link.character_1 != character else link.character_2
+    character.links = links
+
+
 def get_character(request, character_id):
     if not request.user.is_authenticated:
         return redirect("login")
@@ -45,33 +72,19 @@ def get_character(request, character_id):
             return redirect("character", character_id=character_id)
     else:
         form = CharacterForm(instance=character)
-
-        quest_points = list(QuestPoint.objects.filter(character=character))
-        quest_points = sorted(quest_points, key=lambda x: x.step)
-        quests_start_id = set([x.quest.id for x in quest_points if x.step == 0])
-        quests_all_id = set([x.quest.id for x in quest_points])
-        quests_all_id -= quests_start_id
-
-        start_quests = [Quest.objects.get(id=quest_id) for quest_id in quests_start_id]
-        for quest in start_quests:
-            quest.character = character
-        all_quests = [Quest.objects.get(id=quest_id) for quest_id in quests_all_id]
-        for quest in all_quests:
-            quest.character = character
-
-        character.start_quests = start_quests
-        character.is_start = len(start_quests) > 0
-        character.all_quests = all_quests
-        character.is_all = len(all_quests) > 0
-
-        links = Link.objects.filter(Q(character_1=character_id) | Q(character_2=character_id))
-        for link in links:
-            link.pair = link.character_1 if link.character_1 != character else link.character_2
-        character.links = links
+        set_character_info(character)
 
         context = {"character": character, "form": form}
 
         return render(request, "graf_quests/character.html", context=context)
+
+
+def get_all_characters(request, game_id):
+    characters = list(Character.objects.filter(game__id=game_id))
+    for character in characters:
+        set_character_info(character)
+    context = {"characters": characters}
+    return render(request, "graf_quests/characters.html", context=context)
 
 
 def create_character(request, game_id):

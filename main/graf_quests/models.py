@@ -60,6 +60,8 @@ class Character(models.Model):
     role = models.CharField(max_length=256, blank=True, null=True, default="", verbose_name="Роль")
     x = models.IntegerField(default=0)
     y = models.IntegerField(default=0)
+    stuff = models.CharField(max_length=256, verbose_name="Стафф", default=None, null=True, blank=True)
+    todo = models.CharField(max_length=256, verbose_name="Что доделать", default=None, null=True, blank=True)
 
     class Meta:
         verbose_name = "Персонаж"

@@ -1,13 +1,15 @@
 from django.urls import path
 
 from .views import index, get_all_characters_div, set_coord_by_id, get_character, get_quest, delete_quest_point, \
-    create_quest, get_all_quests, delete_quest, edit_link, all_links, create_character_link, create_character
+    create_quest, get_all_quests, delete_quest, edit_link, all_links, create_character_link, create_character, \
+    get_all_characters
 
 urlpatterns = [path("<int:game_id>", index, name="graf_quests"),
 
                # character
                path("character/<int:character_id>", get_character, name="character"),
                path("create_character/<int:game_id>", create_character, name="create_character"),
+               path("all_characters/<int:game_id>", get_all_characters, name="all_characters"),
 
                # quest
                path("quest/<int:quest_id>", get_quest, name="quest"),

@@ -10,8 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
+from sys import platform
 
 import environ
+
+test = platform != "linux"
 
 env = environ.Env()
 environ.Env.read_env()
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'django_dump_load_utf8',
     'graf_quests.apps.GrafQuestsConfig',
     'users.apps.UsersConfig',
     'setka.apps.SetkaConfig'
@@ -79,15 +83,26 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("db_name"),
-        "USER": env("db_user"),
-        "PASSWORD": env("db_password"),
-        "HOST": env("db_host")
+database_postgres = False
+
+if database_postgres:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': env("db_name"),
+            "USER": env("db_user"),
+            "PASSWORD": env("db_password"),
+            "HOST": env("db_host")
+        }
     }
-}
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -133,7 +148,11 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+if test:
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+else:
+    MEDIA_ROOT = "/home/neuchebnaya/media"
+
 MEDIA_URL = "/media/"
 
 # Default primary key field type

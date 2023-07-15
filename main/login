@@ -1,3 +1,8 @@
 ssh kolliu@51.250.17.78
 scp -r D:/projects/neuchebnaya/main/* kolliu@51.250.17.78:/home/kolliu/neuchebnaya_site/
 rm -rf ~/neuchebnaya_site/main ~/neuchebnaya_site/manage.py ~/neuchebnaya_site/static ~/neuchebnaya_site/templatzes ~/neuchebnaya_site/users ~/neuchebnaya_site/media ~/neuchebnaya_site/timetable ~/neuchebnaya_site/topics ~/neuchebnaya_site/exercises ~/neuchebnaya_site/templates ~/neuchebnaya_site/setka ~/neuchebnaya_site/graf_quests ~/neuchebnaya_site/login
+
+
+ssh kolliu@192.168.1.103
+scp -r D:/projects/neuchebnaya/main/* kolliu@192.168.1.103:/home/kolliu/site/
+rm -rf ~/site/main ~/site/manage.py ~/site/static ~/site/templatzes ~/site/users ~/site/media ~/site/timetable ~/site/topics ~/site/exercises ~/site/templates

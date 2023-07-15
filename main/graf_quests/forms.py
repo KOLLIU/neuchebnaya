@@ -7,11 +7,13 @@ class CharacterForm(forms.ModelForm):
     class Meta:
         model = Character
         # fields = "__all__"
-        fields = ["name", "role", "description"]
+        fields = ["name", "role", "description", "stuff", "todo"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "role": forms.TextInput(attrs={"class": "form-control"}),
-            "description": forms.Textarea(attrs={"class": "form-control", "rows": 5})
+            "description": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
+            "stuff": forms.TextInput(attrs={"class": "form-control"}),
+            "todo": forms.TextInput(attrs={"class": "form-control"}),
         }
 
 

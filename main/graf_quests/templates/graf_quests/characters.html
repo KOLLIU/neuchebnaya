@@ -1,0 +1,39 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'graf_quests/css/main.css'%}">
+<script src="{% static 'graf_quests/js/utils.js' %}"></script>
+
+<script src="{% static 'graf_quests/js/ajax_googleapis_jquery_1_10_2_jquery_min_js.js'%}"></script>
+<script src="{% static 'graf_quests/js/ajax_aspnetcdn_com_ajax_jquery_ui_1_10_3_jquery_ui_min.js' %}"></script>
+{% endblock %}
+
+{% block main %}
+<div class="container">
+
+    {%for character in characters%}
+
+    <div class="d-grid">
+        <button class="btn character_block" type="button" data-bs-toggle="collapse"
+                data-bs-target="#character_collapse_{{character.id}}"
+                aria-expanded="false" aria-controls="character_collapse_{{character.id}}">
+            <b><h4>{%if character.name%}Имя: {{character.name}} {%endif%}
+                {%if character.role%}<br>Роль: {{character.role}}{%endif%}</h4></b>
+            {%if character.todo%}<h6>{{character.todo}}</h6>{%endif%}
+            {%if character.stuff%}<h6>{{character.stuff}}</h6>{%endif%}
+        </button>
+    </div>
+    <div class="collapse container character_block" id="character_collapse_{{character.id}}">
+        <h4>{{character.description}}</h4>
+
+        {%include 'graf_quests/include/character_quests_and_links.html'%}
+        <br>
+
+    </div>
+    <br>
+    {% endfor %}
+
+</div>
+{% endblock main %}
