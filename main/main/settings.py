@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'django_dump_load_utf8',
+    'django_dump_load_utf8',
     'graf_quests.apps.GrafQuestsConfig',
     'users.apps.UsersConfig',
     'setka.apps.SetkaConfig'
@@ -83,8 +83,7 @@ WSGI_APPLICATION = 'main.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-database_postgres = False
-
+database_postgres = True
 if database_postgres:
     DATABASES = {
         'default': {
@@ -92,7 +91,7 @@ if database_postgres:
             'NAME': env("db_name"),
             "USER": env("db_user"),
             "PASSWORD": env("db_password"),
-            "HOST": env("db_host")
+            "HOST": env("db_test_host") if test else env("db_host")
         }
     }
 
@@ -137,7 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "graf_quests/static"),
     os.path.join(BASE_DIR, "setka/static"),

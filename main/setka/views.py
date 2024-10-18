@@ -5,7 +5,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from graf_quests.models import Game, ReadyGame, ReadyClub
-from setka.models import Club, Day
+from setka.forms import FileForm
+from setka.models import Club, Day, File
 
 
 # Create your views here.
@@ -76,3 +77,16 @@ def event(request, event_type, event_id):
     context = {"event": event, "event_type": event_type}
 
     return render(request, "setka/event.html", context=context)
+
+
+def get_files(request):
+    files = File.objects.all()
+    # for file in files:
+    #     print(file.file.__dict__["name"])
+    #     for key in file.file.__dict__.keys():
+    #         print(key, file.file.__dict__[key])e
+
+    form = FileForm()
+
+    context = {'files': files, "form": form}
+    return render(request, 'setka/files.html', context=context)

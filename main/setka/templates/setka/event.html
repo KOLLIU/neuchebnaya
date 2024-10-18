@@ -13,7 +13,7 @@
 {% block main %}
 <div class="container">
     <div class="card">
-        <div class="card-body" style="text-align: center">
+        <div class="card-body" style="text-align: justify">
             {%if user.is_superuser%}
             <div class="d-grid">
                 {% if event_type == 'club' %}
@@ -36,12 +36,6 @@
 
             {%if event.responsible%}<p class="card-text">
             Ответственный: {{event.responsible.first_name}} {{event.responsible.last_name}}</p>
-            {%endif%}
-
-            {%if event.discussion%}
-            <div class="d-grid">
-                <a href="{{event.discussion}}" class="btn btn-primary">Обсуждение</a>
-            </div>
             {%endif%}
 
             {%if event.chat%}

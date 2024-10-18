@@ -17,15 +17,15 @@
 {% block main %}
 <div class="container-fluid">
     {% for week in weeks %}
-    <div class="row" style="width: 100rem;">
+    <div class="row" style="width: 120rem;">
         {% for day in week %}
         <div class="col">
             {% if day %}
-            <div class="card day_card" style="height: 18rem; background-color: #fff494" id="day_{{day.id}}">
+            <div class="card day_card" style="height: 36rem; background-color: #fff494" id="day_{{day.id}}">
                 <div class="card-body" style="text-align: center;">
                     {% if user.id == 1 or user.id == 6%}
                     <b><a href="/admin/setka/day/{{day.id}}/change/" style="text-decoration: none; color: black">
-                            {{day.return_week_day}}<br>{{day.return_date}}
+                        {{day.return_week_day}}<br>{{day.return_date}}
                     </a></b>
                     {%else %}
                     <b>{{day.return_week_day}}<br>{{day.return_date}}</b>
@@ -35,44 +35,69 @@
                          style="border: none;">
                         {% if day.game %}
                         <a href="{% url 'event' 'game' day.game.id %}"
-                           style="text-decoration: none;">
+                           style="text-decoration: none; color: black">
                             <div class="d-grid">
 
-                                <button class="btn btn-success" style="height: 6.5rem; width: 95%;
+                                <button class="btn btn-success" style="height: 15.5rem; width: 95%;
                                 background-color: #{{day.game.ready.color}}; color: black;">
-                                    {{day.game.title}}{%if day.game.responsible%}
-                                    <br><span style="background-color: rgba(0.5, 0.5, 0.5, 0.5); color: white">
-                                    {{day.game.responsible.first_name}}</span>{%endif%}
+                                    {%if day.game.responsible.user%}
+                                    <span style="background-color: rgba(0.5, 0.5, 0.5, 0.5); color: white">
+                                    {{day.game.responsible.user.first_name}}</span><br>
+                                    {%endif%}
+                                    <h5>{{day.game.title}}</h5>
+                                    {%if day.game.chat %}
+                                    <a class="btn btn-primary"
+                                       style="text-decoration: none; width: 100%; border: 1px solid black;"
+                                       href="{{day.game.chat}}" target="_blank">Чат</a>
+                                    {% endif %}
+                                    {%if day.game.doc %}
+                                    <a class="btn btn-primary"
+                                       style="text-decoration: none; width: 100%; border: 1px solid black;"
+                                       href="{{day.game.doc}}" target="_blank">Док</a>
+                                    {% endif %}
                                 </button>
 
                             </div>
                         </a>
                         {% else %}
-                        <button class="btn" style="height: 6.5rem; width: 95%">
+                        <button class="btn" style="height: 15.5rem; width: 95%">
                             ㅤ
                         </button>
                         {% endif %}
                     </div>
-                    
+
                     <div class="{% if day.club%}draggable_club{%endif%}" id="club_{{day.club.id}}"
                          style="border: none;">
                         {% if day.club %}
-                        <a href="{% url 'event' 'club' day.club.id %}" style="text-decoration: none;">
+                        <a href="{% url 'event' 'club' day.club.id %}"
+                           style="text-decoration: none; color: black">
                             <div class="d-grid">
-                                {% if day.club %}
-                                <button class="btn btn-primary" style="height: 6.5rem; width: 95%;
+
+                                <button class="btn btn-success" style="height: 15.5rem; width: 95%;
                                 background-color: #{{day.club.ready.color}}; color: black;">
-                                    {{day.club.title}}{%if day.club.responsible%}
-                                    <br><span style="background-color: rgba(0.5, 0.5, 0.5, 0.5); color: white">
-                                    {{day.club.responsible.first_name}}</span>{%endif%}
+                                    {%if day.club.responsible.user%}
+                                    <span style="background-color: rgba(0.5, 0.5, 0.5, 0.5); color: white">
+                                    {{day.club.responsible.user.first_name}}</span><br>
+                                    {%endif%}
+                                    <h5>{{day.club.title}}</h5>
+                                    {%if day.club.chat %}
+                                    <a class="btn btn-primary"
+                                       style="text-decoration: none; width: 100%; border: 1px solid black;"
+                                       href="{{day.club.chat}}" target="_blank">Чат</a>
+                                    {% endif %}
+                                    {%if day.club.doc %}
+                                    <a class="btn btn-primary"
+                                       style="text-decoration: none; width: 100%; border: 1px solid black;"
+                                       href="{{day.club.doc}}" target="_blank">Док</a>
+                                    {% endif %}
                                 </button>
-                                {% else %}
-                                <button class="btn" style="height: 6.5rem; width: 95%">
-                                    ㅤ
-                                </button>
-                                {% endif %}
+
                             </div>
                         </a>
+                        {% else %}
+                        <button class="btn" style="height: 15.5rem; width: 95%">
+                            ㅤ
+                        </button>
                         {% endif %}
                     </div>
                 </div>
@@ -104,25 +129,57 @@
             {% for game in games%}
             <div class="draggable_game d-grid" id="game_{{game.id}}">
                 <a href="{% url 'event' 'game' game.id %}" class="btn btn-success btn-lg"
-                style="background-color: #{{game.ready.color}}; color: black;">
-                    {{game.title}}{%if game.responsible%}
-                    <br><span style="background-color: rgba(0.5, 0.5, 0.5, 0.5); color: white">
-                    {{game.responsible.first_name}}</span>{%endif%}
+                   style="background-color: #{{game.ready.color}}; color: black;">
+                    {{game.title}}
+                    {%if game.responsible.user%}
+                    <br>
+                    <span style="background-color: rgba(0.5, 0.5, 0.5, 0.5); color: white">
+                        {{game.responsible.user.first_name}}
+                    </span>
+                    {%endif%}
                 </a>
+                {%if game.chat %}
+                <a class="btn btn-primary"
+                   style="text-decoration: none;"
+                   href="{{game.chat}}" target="_blank">Чат</a>
+                {% endif %}
+                {%if game.doc %}
+                <a class="btn btn-primary"
+                   style="text-decoration: none; "
+                   href="{{game.doc}}" target="_blank">Док</a>
+                {% endif %}
+
             </div>
+            <br>
             {% endfor %}
         </div>
 
         <div class="col">
             {% for club in clubs%}
             <div class="draggable_club d-grid" id="club_{{club.id}}">
-                <a href="{% url 'event' 'club' club.id %}" class="btn btn-primary btn-lg"
-                style="background-color: #{{club.ready.color}}; color: black;">
-                    {{club.title}}{%if club.responsible%}
-                    <br><span style="background-color: rgba(0.5, 0.5, 0.5, 0.5); color: white">
-                    {{club.responsible.first_name}}</span>{%endif%}
+                <a href="{% url 'event' 'club' club.id %}" class="btn btn-success btn-lg"
+                   style="background-color: #{{club.ready.color}}; color: black;">
+                    {{club.title}}
+                    {%if club.responsible.user%}
+                    <br>
+                    <span style="background-color: rgba(0.5, 0.5, 0.5, 0.5); color: white">
+                        {{club.responsible.user.first_name}}
+                    </span>
+                    {%endif%}
                 </a>
+                {%if club.chat %}
+                <a class="btn btn-primary"
+                   style="text-decoration: none;"
+                   href="{{club.chat}}" target="_blank">Чат</a>
+                {% endif %}
+                {%if club.doc %}
+                <a class="btn btn-primary"
+                   style="text-decoration: none; "
+                   href="{{club.doc}}" target="_blank">Док</a>
+                {% endif %}
+
             </div>
+            <br>
             {% endfor %}
         </div>
     </div>

@@ -1,11 +1,13 @@
 import json
+from json import dumps
+from random import randint
 
 from django.db.models import Q
 from django.forms import modelformset_factory
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from graf_quests.forms import CharacterForm, QuestForm, QuestPointForm
+from graf_quests.forms import CharacterForm, QuestForm, QuestPointForm, FireForm, RainbowForm, FillForm
 from graf_quests.models import Character, Link, QuestPoint, Quest, Game
 from main.settings import BASE_DIR, DEBUG
 
@@ -51,6 +53,17 @@ def set_character_info(character):
     character.is_start = len(start_quests) > 0
     character.all_quests = all_quests
     character.is_all = len(all_quests) > 0
+
+    todo_from_quests = []
+    stuff_from_quests = []
+    for point in sorted(quest_points, key=lambda x: x.quest.id):
+        if point.todo:
+            todo_from_quests.append(f"{len(todo_from_quests) + 1}) {point.todo} (Из квеста: {point.quest.title})")
+        if point.stuff:
+            stuff_from_quests.append(f"{len(stuff_from_quests) + 1}) {point.stuff} (Из квеста: {point.quest.title})")
+
+    character.todo_from_quests = todo_from_quests
+    character.stuff_from_quests = stuff_from_quests
 
     links = Link.objects.filter(Q(character_1=character_id) | Q(character_2=character_id))
     for link in links:
@@ -144,14 +157,18 @@ def get_quest(request, quest_id):
         max_points_len = max([len(points_list) for points_list in points_table])
         max_points_text_len = max([max([len(point.description) for point in points_list])
                                    for points_list in points_table])
-        points_width = 100 / (max_points_len + 1)
+
+        width = 1200
+        points_width = width / (max_points_len + 1)
+        all_points_width = width
 
         points_font_size = points_width / 15
 
         points_height = max_points_text_len / (points_width / points_font_size / 1.8)
 
         context = {"quest_form": quest_form, "points": points, "quest": quest, "formset": formset,
-                   "points_table": points_table, "points_width": str(points_width),
+                   "points_table": points_table,
+                   "points_width": str(points_width), "all_points_width": str(all_points_width),
                    "points_height": str(points_height),
                    "points_font_size": str(points_font_size)}
 
@@ -280,3 +297,50 @@ def create_character_link(request):
         link.save()
 
     return HttpResponse("success")
+
+
+def return_print_text(request, game_id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    characters = list(Character.objects.filter(game__id=game_id))
+    for character in characters:
+        set_character_info(character)
+
+    d = {}
+    for character in characters:
+        name = str(character)
+        d[name] = {}
+
+        start_quests_l = []
+
+        q_d = {"Начинает квесты": character.start_quests, "Участвует в квестах": character.all_quests}
+
+        for key in q_d.keys():
+            for quest in q_d[key]:
+                quest = quest.read_points()
+
+                quest_d = {"Название": quest.title, "Описание": quest.description, "Шаги квеста": []}
+                for point in quest.points:
+                    point_d = {"Шаг": point.step, "Персонаж": str(point.character), "Описание": point.description}
+                    if point.todo:
+                        point_d["todo"] = point.todo
+                    if point.stuff:
+                        point_d["stuff"] = point.stuff
+                    quest_d["Шаги квеста"].append(point_d)
+
+                start_quests_l.append(quest_d)
+
+            if len(start_quests_l) > 0:
+                d[name][key] = start_quests_l
+
+    text = json.dumps(d, ensure_ascii=False, indent=1)
+
+    with open("print_text.json", "w", encoding="utf-8") as file:
+        file.write(text)
+    return HttpResponse(text)
+
+
+def calculator(request):
+    context = {"pairs": [[i, i + 1] for i in range(1, 10, 2)]}
+    return render(request, "graf_quests/calculator.html", context=context)

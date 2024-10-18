@@ -1,3 +1,21 @@
+{% if character.todo_from_quests or character.stuff_from_quests%}
+<div class="character_block">
+    {% if character.todo_from_quests %}
+    <h4>Что доделать</h4>
+    {% endif %}
+    {% for todo in character.todo_from_quests %}
+    <p>{{ todo }}</p>
+    {% endfor %}
+
+    {% if character.stuff_from_quests %}
+    <h4>Необходимый стафф</h4>
+    {% endif %}
+    {% for stuff in character.stuff_from_quests %}
+    <p>{{ stuff }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
 {% if character.is_start %}
 <div class="d-grid">
     <button class="btn quest_block" type="button" data-bs-toggle="collapse"

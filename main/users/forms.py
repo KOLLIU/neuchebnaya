@@ -26,14 +26,3 @@ class UserLoginForm(AuthenticationForm):
     username = forms.CharField(label="Username", widget=forms.TextInput(attrs={"class": "form-control"}))
     password = forms.CharField(label="Пароль", widget=forms.PasswordInput(attrs={"class": "form-control"}))
     # pass
-
-# class CharacterForm(forms.ModelForm):
-#     class Meta:
-#         model = Character
-#         # fields = "__all__"
-#         fields = ["name", "role", "description"]
-#         widgets = {
-#             "name": forms.TextInput(attrs={"class": "form-control"}),
-#             "role": forms.TextInput(attrs={"class": "form-control"}),
-#             "description": forms.Textarea(attrs={"class": "form-control", "rows": 5})
-#         }

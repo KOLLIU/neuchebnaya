@@ -40,6 +40,11 @@
                         </li>
                         <li><a class="dropdown-item" href="{% url 'create_character' game.id %}">Создать персонажа</a>
                         </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'return_print_text' game.id %}">Текстовая версия</a>
+                        </li>
                     </ul>
                 </div>
                 {% endfor %}

@@ -2,19 +2,20 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from graf_quests.models import Game, ReadyClub
+from users.models import Prep
 
 
 # Create your models here.
 class Club(models.Model):
     title = models.CharField(max_length=64)
     is_nav = models.BooleanField(default=False, verbose_name="Навигационная панель")
-    responsible = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,
+    responsible = models.ForeignKey(Prep, on_delete=models.CASCADE, null=True, blank=True,
                                     verbose_name="Ответственный")
     chat = models.CharField(max_length=256, default="", null=True, blank=True, verbose_name="Чат")
-    discussion = models.CharField(max_length=256, default="", null=True, blank=True, verbose_name="Обсуждение")
     doc = models.CharField(max_length=256, default="", null=True, blank=True, verbose_name="Док")
     ready = models.ForeignKey(ReadyClub, null=True, blank=True, on_delete=models.SET_NULL)
     description = models.TextField(null=True, blank=True)
+    chat_message_id = models.IntegerField(null=True, blank=True, verbose_name="id сообщения")
 
     class Meta:
         verbose_name = "Клуб"
@@ -52,3 +53,32 @@ class Day(models.Model):
     @property
     def return_date(self):
         return f"{self.date.day} {months[self.date.month - 7]}"
+
+
+class File(models.Model):
+    title = models.CharField(max_length=256, default="Название файла", verbose_name="Название файла")
+    file = models.FileField(null=True, blank=True, verbose_name="Файл")
+
+    def __str__(self):
+        return self.title
+
+
+class TaskTime(models.Model):
+    title = models.CharField(max_length=256, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ["id"]
+
+
+class Task(models.Model):
+    task_time = models.ForeignKey(TaskTime, on_delete=models.PROTECT)
+    title = models.CharField(max_length=256, null=True, blank=True)
+    otv = models.ForeignKey(Prep, on_delete=models.PROTECT, null=True, blank=True )
+    date = models.DateField()
+
+
+class DoTask(models.Model):
+    user = models.ForeignKey(Prep, on_delete=models.PROTECT, null=True, blank=True)

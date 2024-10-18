@@ -21,6 +21,8 @@
 
 
 
+
+
 </script>
 
 {% endblock %}
@@ -38,8 +40,9 @@
     {% for character_id, character_info in characters.items %}
     <div class="character character_block card" id="{{ character_id }}"
          ondblclick="character_ondblclick('{{character_id}}')"
-         onclick="character_onclick('{{character_id}}')">
-        <div class="card-headder">
+         onclick="character_onclick('{{character_id}}')"
+         style="font-size: 16px; width: 150px;">
+        <div class="card-headder" style="font-size: 16px; width: 150px;">
             <b>
                 {% if character_info.character.name and character_info.character.role%}
                 <a href="{% url 'character' character_id %}" style="color: black; text-decoration: none;">
@@ -58,11 +61,17 @@
 
                 {% else %}
                 <a href="{% url 'character' character_id %}" style="color: black; text-decoration: none;">
-                    Дефолтыч<br>
+                    Заглушка (без имени и роли) <br>
                 </a>
                 {% endif%}
+
+                {%if character_info.character.prep%}
+                {{character_info.character.prep}}<br>
+                {% endif %}
+
                 {% if character_info.start_quests > 0 %} <span>Н:{{character_info.start_quests}}</span> {% endif%}
                 {% if character_info.in_quests > 0 %}У: {{character_info.in_quests}}{% endif%}
+                </br>
             </b>
         </div>
     </div>

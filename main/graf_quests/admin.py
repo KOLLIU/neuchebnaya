@@ -1,11 +1,17 @@
 from django.contrib import admin
 
 from graf_quests.models import Character, Link, Quest, QuestPoint, Game, ReadyGame, ReadyClub
+from users.models import Prep
 
 
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
     list_display = ("title", "ready")
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == 'responsible':
+            kwargs['queryset'] = Prep.objects.filter(tg_id__isnull=False)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(Character)

@@ -7,13 +7,16 @@ class CharacterForm(forms.ModelForm):
     class Meta:
         model = Character
         # fields = "__all__"
-        fields = ["name", "role", "description", "stuff", "todo"]
+        fields = ["name", "role", "prep", "description", "stuff", "todo", "x", "y"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "role": forms.TextInput(attrs={"class": "form-control"}),
+            "prep": forms.TextInput(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 5}),
             "stuff": forms.TextInput(attrs={"class": "form-control"}),
             "todo": forms.TextInput(attrs={"class": "form-control"}),
+            "x": forms.TextInput(attrs={"class": "form-control"}),
+            "y": forms.TextInput(attrs={"class": "form-control"}),
         }
 
 
@@ -36,24 +39,21 @@ class QuestPointForm(forms.ModelForm):
             "stuff": forms.TextInput(attrs={"class": "form-control"}),
             "todo": forms.TextInput(attrs={"class": "form-control"}),
         }
-    #
-    # def __init__(self, *args, **kwargs):
-    #     super(QuestPointForm, self).__init__(*args, **kwargs)
-    #     if self.quest:
-    #         self.fields["character"].queryset = Character.objects.filter(game=self.quest.game)
 
-# class CharacterFormOLD(forms.Form):
-#     game = forms.ModelChoiceField(queryset=Game.objects.all(), empty_label="Игра", label="Игра",
-#                                   widget=forms.Select(attrs={"class": "form-control"}))
-#
-#     name = forms.CharField(max_length=64, label="Имя", required=False,
-#                            widget=forms.TextInput(attrs={"class": "form-control"}))
-#
-#     role = forms.CharField(max_length=256, label="Роль", required=False,
-#                            widget=forms.TextInput(attrs={"class": "form-control"}))
-#
-#     description = forms.CharField(label="Описание", required=False,
-#                                   widget=forms.Textarea(attrs={"class": "form-control"}))
-#
-#     x = forms.IntegerField(initial=500)
-#     y = forms.IntegerField(initial=500)
+
+class FireForm(forms.Form):
+    nums = forms.IntegerField(label="Количество спрайтов")
+    min_speed = forms.IntegerField(label="Минимальная скорость")
+    max_speed = forms.IntegerField(label="Максимальная скорость")
+    pow = forms.IntegerField(label="Степень графика")
+    alt = forms.IntegerField(label="Ускорение")
+
+
+class RainbowForm(forms.Form):
+    speed = forms.IntegerField(label="Скорость")
+
+
+class FillForm(forms.Form):
+    r = forms.IntegerField(label="Красный")
+    g = forms.IntegerField(label="Зелёный")
+    b = forms.IntegerField(label="Синий")

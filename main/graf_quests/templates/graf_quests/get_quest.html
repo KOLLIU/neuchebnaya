@@ -90,12 +90,12 @@
 <div id="points_graf">
     {% for points_list in points_table %}
     <div style="display: flex; text-align: center; justify-content: space-evenly;
-    width: 100vw;">
+    width: {{all_points_width}}px;">
         {% for point in points_list%}
         <a href="#point_{{point.id}}">
-            <div style="display: inline-block; height: {{points_height}}vw; width: {{points_width}}vw;
-        border-radius: {{points_font_size}}vw;
-        font-size: {{points_font_size}}vw;" class="quest_point_block">
+            <div style="display: inline-block; width: {{points_width}}px;
+        border-radius: 10px;
+        font-size: 20px;" class="quest_point_block">
                 {{point.step}}<br>
                 <b>{{point.character}}</b> <br>
                 <p>{{point.description}}</p>

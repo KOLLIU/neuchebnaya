@@ -1,0 +1,160 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+
+    <style>@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);</style>
+
+    <title>ЛМШ дистанционное собеседование</title>
+
+    <script>var csrftoken = '{{ csrf_token }}';</script>
+</head>
+
+<style>
+body {
+    background-color: #FFFFFF;
+}
+.unselectable {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+</style>
+
+<script>
+<!--Заморочки шаблонизации json-->
+pattern = /&quot;/g;
+data = '{{data}}'.replace(pattern, '"');
+
+data = JSON.parse(data);
+data_send_url = "{% url 'test_get_data'%}"
+
+var primaryMouseButtonDown = false;
+
+function setPrimaryButtonState(e) {
+  var flags = e.buttons !== undefined ? e.buttons : e.which;
+  primaryMouseButtonDown = (flags & 1) === 1;
+}
+
+document.addEventListener("mousedown", setPrimaryButtonState);
+document.addEventListener("mousemove", setPrimaryButtonState);
+document.addEventListener("mouseup", setPrimaryButtonState);
+
+const true_color = "#33FF33";
+const false_color = "#FF7777"
+
+function change_td(str){
+    if (!data.hasOwnProperty(str)){
+        return 0;
+    }
+
+    if (data[str] == 1){
+        document.getElementById(str).style["background-color"] = false_color;
+        data[str] = 0;
+    } else {
+        document.getElementById(str).style["background-color"] = true_color;
+        data[str] = 1;
+    }
+<!--    send_data();-->
+}
+
+function mouse_over_td(str){
+    if (primaryMouseButtonDown){
+        change_td(str);
+    }
+}
+
+function set_colors(){
+    for (const [key, value] of Object.entries(data)) {
+        if (value == 0){
+            document.getElementById(String(key)).style["background-color"] = false_color;
+        } else {
+            document.getElementById(String(key)).style["background-color"] = true_color;
+        }
+    }
+}
+
+function send_data(){
+    $.post(data_send_url, {csrfmiddlewaretoken: csrftoken, "data": JSON.stringify(data)}, function (answer, status) {
+        console.log(answer);
+    });
+    console.log(data);
+}
+
+
+</script>
+
+<body>
+<div style="min-height: 1000px;">
+    <table class="table table-bordered unselectable" style="table-layout: fixed; min-width: 1300px;">
+        <thead>
+        <tr>
+            <th scope="col">Время</th>
+            {% for day in weekdays%}
+            <th scope="col">{{day}}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for row in rows %}
+        <tr>
+            <th scope="row" class="align-top" style="font-size: 16px;">
+                <div style="position: relative; left: 10px;">{{ row.time }}</div>
+            </th>
+            {% for i in row.columns %}
+            <td align="center" id="{{i}} {{row.time}}" style="background-color: #CCCCCC">
+                <div style="margin-top: -9px; margin-bottom: -100px; margin-left: -7px; margin-right: -7px;
+            padding-bottom: 20px; padding-top: 0px;
+            position: relative; bottom: 0px;"
+                     onmouseover="mouse_over_td('{{i}} {{row.time}}')"
+                     onmousedown="change_td('{{i}} {{row.time}}')"
+                     class="unselectable">
+                    {{ row.time }}
+                </div>
+            </td>
+
+            {% endfor %}
+        </tr>
+        {% endfor %}
+
+
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="d-grid">
+            <button class="btn btn-success" onclick="send_data()">Сохранить данные</button>
+        </div>
+    </div>
+
+    <script>set_colors();</script>
+</div>
+
+<footer class="bg-dark text-center text-white">
+    <div class="container p-4">
+        <section class="mb-4">
+            <a class="btn btn-outline-light btn-floating m-1" href="https://t.me/lmsh_mccme" role="button">
+                <i class="fa fa-paper-plane fa-2x"></i></a>
+            <a class="btn btn-outline-light btn-floating m-1" href="https://vk.com/lmsh_mccme" role="button">
+                <i class="fa fa-vk fa-2x"></i></a>
+            <p>lmsh.edu.ru@gmail.com</p>
+        </section>
+    </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

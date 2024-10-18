@@ -1,8 +1,9 @@
-from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
 from django.urls import reverse
+
+from users.models import Prep
 
 
 class ReadyGame(models.Model):
@@ -36,14 +37,14 @@ class ReadyClub(models.Model):
 class Game(models.Model):
     title = models.CharField(max_length=64, verbose_name="Название")
     is_nav = models.BooleanField(default=False, verbose_name="Навигационная панель")
-    responsible = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,
+    responsible = models.ForeignKey(Prep, on_delete=models.CASCADE, null=True, blank=True,
                                     verbose_name="Ответственный")
     chat = models.CharField(max_length=256, default="", null=True, blank=True, verbose_name="Чат")
-    discussion = models.CharField(max_length=256, default="", null=True, blank=True, verbose_name="Обсуждение")
     is_new = models.BooleanField(default=False, verbose_name="Новая")
     doc = models.CharField(max_length=256, default="", null=True, blank=True, verbose_name="Док")
     ready = models.ForeignKey(ReadyGame, null=True, blank=True, on_delete=models.SET_NULL)
     description = models.TextField(null=True, blank=True)
+    chat_message_id = models.IntegerField(null=True, blank=True, verbose_name="id сообщения")
 
     class Meta:
         verbose_name = "Игрушка"
@@ -54,8 +55,9 @@ class Game(models.Model):
 
 
 class Character(models.Model):
-    game = models.ForeignKey("Game", on_delete=models.PROTECT, verbose_name="Игра")
+    game = models.ForeignKey("Game", on_delete=models.CASCADE, verbose_name="Игра")
     name = models.CharField(max_length=64, verbose_name="Имя", null=True, blank=True)
+    prep = models.CharField(max_length=256, null=True, blank=True, verbose_name="Сотрудник")
     description = models.TextField(null=True, blank=True, verbose_name="Описание")
     role = models.CharField(max_length=256, blank=True, null=True, default="", verbose_name="Роль")
     x = models.IntegerField(default=0)
@@ -69,18 +71,18 @@ class Character(models.Model):
         ordering = ["game", "role", "name"]
 
     def __str__(self):
-        return f"({str(self.game)[:3:]}) {self.role + '' if self.role else ''}{self.name if self.name else ''}"
+        return f"({str(self.game)[:3:]}) {self.role + '' if self.role else ''} " \
+               f"{'Персонаж: ' + self.name if self.name else ''}{'Преп: ' + self.prep if self.prep else ''}"
 
     def get_absolute_url(self):
         return reverse("character", kwargs={"character_id": self.pk})
 
 
-
 class Link(models.Model):
-    game = models.ForeignKey("Game", on_delete=models.PROTECT, verbose_name="Игра")
-    character_1 = models.ForeignKey("Character", on_delete=models.PROTECT, verbose_name="Первый персонаж",
+    game = models.ForeignKey("Game", on_delete=models.CASCADE, verbose_name="Игра")
+    character_1 = models.ForeignKey("Character", on_delete=models.CASCADE, verbose_name="Первый персонаж",
                                     related_name="character_1")
-    character_2 = models.ForeignKey("Character", on_delete=models.PROTECT, verbose_name="Второй персонаж",
+    character_2 = models.ForeignKey("Character", on_delete=models.CASCADE, verbose_name="Второй персонаж",
                                     related_name="character_2")
     text = models.TextField(verbose_name="Текст")
 
@@ -93,7 +95,7 @@ class Link(models.Model):
 
 
 class Quest(models.Model):
-    game = models.ForeignKey("Game", on_delete=models.PROTECT, verbose_name="Игра")
+    game = models.ForeignKey("Game", on_delete=models.CASCADE, verbose_name="Игра")
     title = models.CharField(null=True, blank=True, max_length=256, verbose_name="Название")
     description = models.TextField(null=True, blank=True, verbose_name="Описание")
 

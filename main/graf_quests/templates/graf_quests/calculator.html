@@ -1,0 +1,144 @@
+{% extends "base.html"%}
+
+{% block main %}
+<script>
+    first = "";
+    second = "";
+
+    k_sil = 5;
+    k_lov = 3;
+    k_int = 2.5;
+
+    function ch_first(id){
+        first = id;
+        if (second != "") attack()
+    }
+    function ch_second(id){
+        second = id;
+        if (first != "") attack()
+    }
+    function attack(){
+        sil = Number(document.getElementById("sil" + first).value) * k_sil;
+        lov = Number(document.getElementById("lov" + first).value) * k_lov;
+        int = Number(document.getElementById("int" + first).value) * k_int;
+        dmg = Math.max(sil, lov, int);
+        hp = document.getElementById("zdor" + second).value;
+        if (hp - dmg > 0) {hp = hp - dmg; console.log(hp)}
+        else {hp = 0}
+        document.getElementById("zdor" + second).value = hp;
+        first = "";
+        second = "";
+    }
+
+    function calculate_hp(id){
+        sil = Number(document.getElementById("sil" + id).value);
+        lov = Number(document.getElementById("lov" + id).value);
+        int = Number(document.getElementById("int" + id).value);
+
+        document.getElementById("sil_uron" + id).innerHTML = String(Number(document.getElementById("sil" + id).value) * k_sil)
+        document.getElementById("lov_uron" + id).innerHTML = String(Number(document.getElementById("lov" + id).value) * k_lov)
+        document.getElementById("int_uron" + id).innerHTML = String(Number(document.getElementById("int" + id).value) * k_int)
+
+
+
+        bro = Number(document.getElementById("bro" + id).value);
+
+        hp = document.getElementById("zdor" + id).value
+        if (hp != 0) return;
+        hp = sil * 6 + lov * 4 + int * 2 + bro * 2;
+        document.getElementById("zdor" + id).value = String(hp);
+    }
+
+
+
+
+
+
+
+</script>
+
+<div class="container">
+    {% for i, j in pairs%}
+    <div>
+        <div style="width: 1000px;">
+            <div style="float: left; border:1px solid black; border-radius:5px; margin-right: 10px; padding:4px">
+                <label for="name{{i}}">Имя</label>
+                <input type="text" id="name{{i}}" size="20"/><br>
+
+                <label for="sil{{i}}">Сила</label>
+                <input type="text" id="sil{{i}}" size="2" value="1"/>
+                <span id="sil_uron{{i}}">-</span>
+                <br>
+
+                <label for="lov{{i}}">Ловкость</label>
+                <input type="text" id="lov{{i}}" size="2" value="1"/>
+                <span id="lov_uron{{i}}">-</span>
+                <br>
+
+                <label for="int{{i}}">Интеллект</label>
+                <input type="text" id="int{{i}}" size="2" value="1"/>
+                <span id="int_uron{{i}}">-</span>
+                <br>
+
+                <label for="bro{{i}}">Броня</label>
+                <input type="text" id="bro{{i}}" size="2" value="0"/><br>
+
+                <label for="zdor{{i}}">Здоровье</label>
+                <input type="text" id="zdor{{i}}" size="2" value="0"/><br>
+
+                <button class="btn btn-danger" onclick="ch_first(&quot;{{i}}&quot;)">
+                    Атакует
+                </button>
+                <button class="btn btn-secondary" onclick="ch_second(&quot;{{i}}&quot;)">
+                    Получает
+                </button>
+                <br>
+                <button class="btn btn-primary" onclick="calculate_hp(&quot;{{i}}&quot;)">
+                    Рассчёт
+                </button>
+
+            </div>
+            <div style="float: left; border:1px solid black; border-radius:5px; margin-right: 10px; padding:4px">
+                <label for="name{{j}}">Имя</label>
+                <input type="text" id="name{{j}}" size="20"/><br>
+
+                <label for="sil{{j}}">Сила</label>
+                <input type="text" id="sil{{j}}" size="2" value="1"/>
+                <span id="sil_uron{{j}}">-</span>
+                <br>
+
+                <label for="lov{{j}}">Ловкость</label>
+                <input type="text" id="lov{{j}}" size="2" value="1"/>
+                <span id="lov_uron{{j}}">-</span>
+                <br>
+
+                <label for="int{{j}}">Интеллект</label>
+                <input type="text" id="int{{j}}" size="2" value="1"/>
+                <span id="int_uron{{j}}">-</span>
+                <br>
+
+                <label for="bro{{j}}">Броня</label>
+                <input type="text" id="bro{{j}}" size="2" value="0"/><br>
+
+                <label for="zdor{{j}}">Здоровье</label>
+                <input type="text" id="zdor{{j}}" size="2" value="0"/><br>
+
+                <button class="btn btn-danger" onclick="ch_first(&quot;{{j}}&quot;)">
+                    Атакует
+                </button>
+                <button class="btn btn-secondary" onclick="ch_second(&quot;{{j}}&quot;)">
+                    Получает
+                </button>
+                <br>
+                <button class="btn btn-primary" onclick="calculate_hp(&quot;{{j}}&quot;)">
+                    Рассчёт
+                </button>
+
+            </div>
+        </div>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br>
+    {% endfor %}
+</div>
+
+{% endblock main %}
