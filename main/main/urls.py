@@ -23,9 +23,9 @@ from main import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('graf_quests/', include('graf_quests.urls')),
-    # path('', include('graf_quests.urls')),
     path('users/', include('users.urls')),
     path('', include('setka.urls')),
+    path('free_time/', include("free_time.urls"))
 ]
 
 if settings.DEBUG:

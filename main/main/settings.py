@@ -44,10 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_dump_load_utf8',
+    # 'django_dump_load_utf8',
     'graf_quests.apps.GrafQuestsConfig',
     'users.apps.UsersConfig',
-    'setka.apps.SetkaConfig'
+    'setka.apps.SetkaConfig',
+    "free_time.apps.FreeTimeConfig"
 ]
 
 MIDDLEWARE = [
@@ -126,7 +127,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Etc/GMT-3'
 
 USE_I18N = True
 
