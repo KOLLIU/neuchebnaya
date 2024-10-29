@@ -81,3 +81,7 @@ def set_free_time_by_slug(request, free_time_slug):
     free_time.data = data
     free_time.save()
     return HttpResponse("success")
+
+
+def set_free_time_by_slug_with_weekdays(request):
+    pass

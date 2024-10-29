@@ -1,7 +1,7 @@
 from django.urls import path
 
 from free_time.views import index, get_event_free_time_by_user, free_time_by_slug, set_free_time_by_slug, \
-    get_event_free_time_without_user
+    get_event_free_time_without_user, set_free_time_by_slug_with_weekdays
 
 urlpatterns = [path("", index, name="free_time_main"),
 
@@ -21,4 +21,7 @@ urlpatterns = [path("", index, name="free_time_main"),
                     name="get_event_free_time_without_user"),
 
                path("free_time_by_slug/<slug:free_time_slug>", free_time_by_slug, name="free_time_by_slug"),
-               path("set_free_time_by_slug/<slug:free_time_slug>", set_free_time_by_slug, name="set_free_time_by_slug")]
+               path("set_free_time_by_slug/<slug:free_time_slug>", set_free_time_by_slug, name="set_free_time_by_slug"),
+               path("set_free_time_by_slug_with_weekdays/<slug:free_time_slug>", set_free_time_by_slug_with_weekdays,
+                    name="set_free_time_by_slug_with_weekdays")
+               ]
