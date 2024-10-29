@@ -1,9 +1,0 @@
-.draggable_game, .draggable_club {
-    font-size: 1em;
-    border: thin solid black;
-    display: block;
-}
-
-body {
-    background-color: #333333;
-}
