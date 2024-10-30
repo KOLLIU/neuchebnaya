@@ -90,8 +90,6 @@ function choose_table(step_str){
     document.getElementById("table_" + step_str).style["display"] = "block";
     document.getElementById("table_button_" + step_str).classList.remove('btn-danger');
     document.getElementById("table_button_" + step_str).classList.add('btn-primary')
-    document.getElementById("filling_accuracy").innerHTML = "Интервалы: (" + step_str + ")"
-
     set_colors();
 }
 
@@ -120,7 +118,6 @@ function choose_filling_pattern(pattern_str){
 function update_history_buttons(){
     undo = document.getElementById("btn_arrow_undo");
     redo = document.getElementById("btn_arrow_redo");
-    console.log(history.length);
     if (history.length > 0){
         undo.style["color"] = "#FFFFFF";
         undo.style["background-color"] = "rgba(255, 255, 255, 0.3)";

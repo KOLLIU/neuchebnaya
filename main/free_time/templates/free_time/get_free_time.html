@@ -18,6 +18,9 @@
         padding: min(1.1vw, 10px);
         border-radius: 15px;
     }
+    .dropdown_li{
+        margin: 10px;
+    }
 </style>
 
 <script>
@@ -44,12 +47,6 @@
 {% load static %}
 
 <script src="{% static 'timetable/js/get_free_time.js' %}"></script>
-
-<style>
-    .dropdown_li{
-        margin: 10px;
-    }
-</style>
 
 <div style="
 position: -webkit-sticky;
@@ -102,90 +99,69 @@ padding: 5px;">
 
         <div class="collapse  show container" id="collapseExample"
              style="background-color: #fff494; padding-bottom: 10px; padding-top:10px; border-radius: 10px;">
-            <h2 align="center">{{event.title}}</h2>
+            <h2 align="center"><b>{{event.title}}</b></h2>
             <p style="text-align: justify; font-size: 1.2rem;"><b>{{event.description}}</b></p>
 
             <!--Временные интервалы-->
             <div class="form-control" style="border-radius: 10px;">
-                <h3 align="center">Временные интервалы</h3>
+                <h4 align="center">Временные интервалы</h4>
                 <p style="text-align: justify;">
                     Выбор длины временных интервалов влияет на точность заполнения таблицы. Чем меньше интервал, тем
                     быстрее заполняется таблица, но тем меньше точность её заполнения. Временные интервалы можно
                     изменять в процессе заполнения, чтобы быстро заполнить определённые промежутки времени, остальное
                     можно дозаполнить более аккуратно, используя интервалы с меньшей длиной.</p>
-                <div class="btn-group d-grid">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false" id="filling_accuracy"
-                            style="font-size: min(3.2vw, 20px);">
-                        Интервалы
-                    </button>
-                    <ul class="dropdown-menu" style="width: 100%;">
-                        {% for table in all_tables %}
-                        <li class="d-grid dropdown_li">
-                            <button class="btn btn-danger table_button" id="table_button_{{table.step}}"
-                                    onclick="choose_table(&quot;{{table.step}}&quot;)">{{table.step}}
-                            </button>
-                        </li>
-                        {% endfor %}
-                    </ul>
+                <div class="row">
+                    {% for table in all_tables %}
+                    <div class="btn btn-danger table_button col"
+                         id="table_button_{{table.step}}"
+                         style="margin: 5px;"
+                         onclick="choose_table(&quot;{{table.step}}&quot;)">{{table.step}}
+                    </div>
+                    {% endfor %}
                 </div>
+
             </div>
             <br>
 
             <!--Шаблоны заполнения-->
             <div class="form-control" style="border-radius: 10px;">
-                <h3 align="center">Шаблоны заполнения</h3>
-                <p style="text-align: justify;">Шаблоны заполнения позволяют установить предварительное состояние ячеек.
-                    Вы можете установить определённый статус для всех ячеек. {% if event.id != 1%}Также вы можете <b>использовать
-                        данные из <a href="{% url 'get_event_free_time_by_user' '1' '-'%}">таблицы удобного времени по
-                            дням недели</a></b>. {% endif %}Установленные данные можно будет отредактировать. Обратите
+                <h4 align="center">Шаблоны заполнения и пояснения к опциям интервалов</h4>
+                <p style="text-align: justify;">Шаблоны заполнения позволяют установить определённое состояние для всех ячеек таблицы разом.
+                    {% if event.id != 1%}Также вы можете <b>использовать
+                        данные шаблона из <a href="{% url 'get_event_free_time_by_user' '1' '-'%}">таблицы удобного времени по
+                            дням недели</a></b> и подредактировать его для текущих дат. {% endif %}Установленные данные можно будет отредактировать. Обратите
                     внимание — использование шаблона ведёт к стиранию предыдущих данных этого ответа и внесению новых.
                     Будьте аккуратны.</p>
+
                 {% if user.is_authenticated and event.id != 1%}
                 <div class="d-grid dropdown_li">
-                    <button class="btn btn-danger"
+                    <button class="btn btn-primary"
                             onclick="choose_filling_pattern(&quot;-&quot;)">
                         Взять данные из таблицы удобного времени по дням недели
                     </button>
                 </div>
-
                 {% endif %}
-                <div class="btn-group d-grid dropdown_li">
-                    <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false" id="filling patterns"
-                            style="font-size: min(3.2vw, 20px);">
-                        Другие шаблоны
-                    </button>
-                    <ul class="dropdown-menu" style="width: 100%;">
+
+                <div class="form-control">
+                    <h4 align="center">Закрасить таблицу по шаблону</h4>
+                    <div class="row">
                         {% for free_time_type in free_time_types %}
-                        <li class="d-grid dropdown_li">
-                            <button class="btn" style="background-color: {{free_time_type.color}}"
-                                    onclick="choose_filling_pattern(&quot;{{free_time_type.id}}&quot;)">
-                                Преимущественно: {{free_time_type.title}}
-                            </button>
-                        </li>
+                        <div class="col-lg"
+                             style="background-color: {{free_time_type.color}};
+                             width: 100%;
+                             margin: 5px;
+                             padding: 10px;
+                             border-radius: 10px;"
+                             onclick="choose_filling_pattern(&quot;{{free_time_type.id}}&quot;)">
+                            <h5><b>{{free_time_type.title}}</b></h5>
+                            {{free_time_type.description}}
+                        </div>
                         {% endfor %}
-                        {% if user.is_authenticated and event.id != 1%}
-                        <li class="d-grid btn-warning dropdown_li">
-                            <button class="btn btn-danger"
-                                    onclick="choose_filling_pattern(&quot;-&quot;)">
-                                Взять данные из таблицы удобного времени по дням недели
-                            </button>
-                        </li>
-                        {% endif %}
-                    </ul>
+                    </div>
+
                 </div>
             </div>
-            <br>
-            <!--Статусы интервалов-->
-            <div class="form-control" style="border-radius: 10px;">
-                <h3 align="center">Подсказки к опциям интервалов</h3>
-                {% for free_time_type in free_time_types%}
-                <p style="text-align: justify; background-color: {{free_time_type.color}}">{{free_time_type.title}} -
-                    {{free_time_type.description}}</p>
-                {% endfor %}
-            </div>
-            <br>
+
             <!--Кнопка отправки-->
             <div class="d-grid">
                 <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
@@ -251,8 +227,6 @@ padding: 5px;">
         button = table_buttons[table_buttons.length - 1];
         button.classList.remove( 'btn-danger' );
         button.classList.add('btn-primary')
-
-        document.getElementById("filling_accuracy").innerHTML = "Интервалы: (" + button.innerHTML + ")"
 
         document.getElementById("filling_free_time_type").innerHTML = "Выбрать: " + free_time_types_dict[active_free_time_type]["title"]
         document.getElementById("filling_free_time_type").style["background-color"] = free_time_types_dict[active_free_time_type]["color"]
