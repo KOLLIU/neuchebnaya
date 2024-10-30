@@ -11,6 +11,13 @@
       -webkit-user-select: none;
       user-select: none;
     }
+    .arrow_undo_redo {
+        display:inline-block;
+        color: gray;
+        width: min(10vw, 60px);
+        padding: min(1.1vw, 10px);
+        border-radius: 15px;
+    }
 </style>
 
 <script>
@@ -29,12 +36,20 @@
     cell_free_time_types_dict["{{free_time_type.id}}"] = 0;
     {% endfor %}
 
-    data_send_url = "{% url 'set_free_time_by_slug' free_time.slug%}"
+    data_send_url = "{% url 'set_free_time_by_slug' free_time.slug%}";
+    fill_data_with_weekdays_data_url = "{% url 'set_free_time_by_slug_with_weekdays' free_time.slug%}"
+
 </script>
 
 {% load static %}
 
 <script src="{% static 'timetable/js/get_free_time.js' %}"></script>
+
+<style>
+    .dropdown_li{
+        margin: 10px;
+    }
+</style>
 
 <div style="
 position: -webkit-sticky;
@@ -42,29 +57,47 @@ position:sticky;
 top: 0px; background-color: #212529; z-index:1000;
 padding: 5px;">
     <div class="container">
-        <div style="display:inline-block;">
-            <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample"
-                    aria-expanded="false" aria-controls="collapseExample"
-                    style="font-size: min(3.2vw, 20px);">
-                <i class='fa fa-gears'></i>
-            </button>
-        </div>
+        <div style="display:inline-block;" class="unselectable">
+            <div style="display:inline-block;">
+                <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseExample"
+                        aria-expanded="false" aria-controls="collapseExample"
+                        style="font-size: min(3.2vw, 20px);">
+                    <i class="bi bi-gear"></i>
+                </button>
+            </div>
 
-        <div class="btn-group">
-            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                    aria-expanded="false" id="filling_free_time_type"
-                    style="font-size: min(3.2vw, 20px);">
-                Выбрать
-            </button>
-            <ul class="dropdown-menu" style="width: 100%;">
-                {% for free_time_type in free_time_types %}
-                <li class="d-grid" style="margin-bottom: 5px;">
-                    <button class="btn" style="background-color: {{free_time_type.color}}"
-                            onclick="choose_free_time_type(&quot;{{free_time_type.id}}&quot;)">{{free_time_type.title}}
-                    </button>
-                </li>
-                {% endfor %}
-            </ul>
+            <div class="btn-group">
+                <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" id="filling_free_time_type"
+                        style="font-size: min(3.2vw, 20px);">
+                    Выбрать
+                </button>
+                <ul class="dropdown-menu" style="width: 100%;">
+                    {% for free_time_type in free_time_types %}
+                    <li class="d-grid dropdown_li">
+                        <button class="btn" style="background-color: {{free_time_type.color}}"
+                                onclick="choose_free_time_type(&quot;{{free_time_type.id}}&quot;)">
+                            {{free_time_type.title}}
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="btn_arrow_undo"
+                 class="arrow_undo_redo"
+                 onclick="undo_history();"
+                 align="center">
+                <i class="bi bi-arrow-90deg-left"></i>
+            </div>
+            <div id="btn_arrow_redo"
+                 class="arrow_undo_redo"
+                 onclick="redo_history();"
+                 align="center">
+                <i class="bi bi-arrow-90deg-right"></i>
+            </div>
+
         </div>
 
         <div class="collapse  show container" id="collapseExample"
@@ -76,7 +109,10 @@ padding: 5px;">
             <div class="form-control" style="border-radius: 10px;">
                 <h3 align="center">Временные интервалы</h3>
                 <p style="text-align: justify;">
-Выбор длины временных интервалов влияет на точность заполнения таблицы. Чем меньше интервал, тем быстрее заполняется таблица, но тем меньше точность её заполнения. Временные интервалы можно изменять в процессе заполнения, чтобы быстро заполнить определённые промежутки времени, остальное можно дозаполнить более аккуратно, используя интервалы с меньшей длиной.</p>
+                    Выбор длины временных интервалов влияет на точность заполнения таблицы. Чем меньше интервал, тем
+                    быстрее заполняется таблица, но тем меньше точность её заполнения. Временные интервалы можно
+                    изменять в процессе заполнения, чтобы быстро заполнить определённые промежутки времени, остальное
+                    можно дозаполнить более аккуратно, используя интервалы с меньшей длиной.</p>
                 <div class="btn-group d-grid">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                             aria-expanded="false" id="filling_accuracy"
@@ -85,13 +121,12 @@ padding: 5px;">
                     </button>
                     <ul class="dropdown-menu" style="width: 100%;">
                         {% for table in all_tables %}
-                        <li class="d-grid"  style="margin-bottom: 5px;">
-                                <button class="btn btn-danger table_button" id="table_button_{{table.step}}"
-                                        onclick="choose_table(&quot;{{table.step}}&quot;)">{{table.step}}
-                                </button>
+                        <li class="d-grid dropdown_li">
+                            <button class="btn btn-danger table_button" id="table_button_{{table.step}}"
+                                    onclick="choose_table(&quot;{{table.step}}&quot;)">{{table.step}}
+                            </button>
                         </li>
                         {% endfor %}
-                        {% if user.auth%}
                     </ul>
                 </div>
             </div>
@@ -100,24 +135,55 @@ padding: 5px;">
             <!--Шаблоны заполнения-->
             <div class="form-control" style="border-radius: 10px;">
                 <h3 align="center">Шаблоны заполнения</h3>
-                <p style="text-align: justify;">Шаблоны заполнения позволяют установить предварительное состояние ячеек. Вы можете установить определённый статус для всех ячеек. {% if event.id != 1%}Также вы можете <b>использовать данные из <a href="{% url 'get_event_free_time_by_user' '1' '-'%}">таблицы удобного времени по дням недели. </a></b>{% endif %}Обратите внимание — использование шаблона ведёт к полной перезаписи данных. Будьте аккуратны.</p>
-                <div class="btn-group d-grid">
+                <p style="text-align: justify;">Шаблоны заполнения позволяют установить предварительное состояние ячеек.
+                    Вы можете установить определённый статус для всех ячеек. {% if event.id != 1%}Также вы можете <b>использовать
+                        данные из <a href="{% url 'get_event_free_time_by_user' '1' '-'%}">таблицы удобного времени по
+                            дням недели</a></b>. {% endif %}Установленные данные можно будет отредактировать. Обратите
+                    внимание — использование шаблона ведёт к стиранию предыдущих данных этого ответа и внесению новых.
+                    Будьте аккуратны.</p>
+                {% if user.is_authenticated and event.id != 1%}
+                <div class="d-grid dropdown_li">
+                    <button class="btn btn-danger"
+                            onclick="choose_filling_pattern(&quot;-&quot;)">
+                        Взять данные из таблицы удобного времени по дням недели
+                    </button>
+                </div>
+
+                {% endif %}
+                <div class="btn-group d-grid dropdown_li">
                     <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown"
                             aria-expanded="false" id="filling patterns"
                             style="font-size: min(3.2vw, 20px);">
-                        Шаблоны
+                        Другие шаблоны
                     </button>
                     <ul class="dropdown-menu" style="width: 100%;">
                         {% for free_time_type in free_time_types %}
-                        <li class="d-grid" style="margin-bottom: 5px;">
+                        <li class="d-grid dropdown_li">
                             <button class="btn" style="background-color: {{free_time_type.color}}"
                                     onclick="choose_filling_pattern(&quot;{{free_time_type.id}}&quot;)">
-                                {{free_time_type.title}}
+                                Преимущественно: {{free_time_type.title}}
                             </button>
                         </li>
                         {% endfor %}
+                        {% if user.is_authenticated and event.id != 1%}
+                        <li class="d-grid btn-warning dropdown_li">
+                            <button class="btn btn-danger"
+                                    onclick="choose_filling_pattern(&quot;-&quot;)">
+                                Взять данные из таблицы удобного времени по дням недели
+                            </button>
+                        </li>
+                        {% endif %}
                     </ul>
                 </div>
+            </div>
+            <br>
+            <!--Статусы интервалов-->
+            <div class="form-control" style="border-radius: 10px;">
+                <h3 align="center">Подсказки к опциям интервалов</h3>
+                {% for free_time_type in free_time_types%}
+                <p style="text-align: justify; background-color: {{free_time_type.color}}">{{free_time_type.title}} -
+                    {{free_time_type.description}}</p>
+                {% endfor %}
             </div>
             <br>
             <!--Кнопка отправки-->
@@ -125,7 +191,7 @@ padding: 5px;">
                 <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseExample"
                         aria-expanded="false" aria-controls="collapseExample">
-                    Свернуть подсказку <i class='fa fa-gears'></i>
+                    Свернуть подсказку <i class="bi bi-gear"></i>
                 </button>
             </div>
         </div>
@@ -164,11 +230,15 @@ padding: 5px;">
             {% endfor %}
         </tr>
         {% endfor %}
-
-
         </tbody>
     </table>
     {% endfor %}
+    <div class="d-grid">
+        <button class="btn btn-success" onclick="alert('Вы невероятны! Спасибо');">Сохранить. Вообще это не обязательно,
+            данные сохраняются в процессе
+            редактирования. Но так спокойней, верно?
+        </button>
+    </div>
 
     <script>set_colors();</script>
 

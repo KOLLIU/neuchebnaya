@@ -5,6 +5,10 @@ function setPrimaryButtonState(e) {
   primaryMouseButtonDown = (flags & 1) === 1;
 }
 
+
+const history = new Array();
+const redo_history_list = new Array();
+
 document.addEventListener("mousedown", setPrimaryButtonState);
 document.addEventListener("mousemove", setPrimaryButtonState);
 document.addEventListener("mouseup", setPrimaryButtonState);
@@ -19,13 +23,19 @@ function change_td(str){
     start = Number(time[0].split(":")[0]) * 60 + Number(time[0].split(":")[1])
     stop = Number(time[1].split(":")[0]) * 60 + Number(time[1].split(":")[1])
 
+    history_data = [];
+
     for (i = start; i < stop; ++i){
+        history_data.push(data[day_id][i]);
         data[day_id][i] = active_free_time_type;
     }
 
+    history.push({"str": str, "day_id": day_id, "time":time, "start": start, "stop":stop, "history_data": history_data, "act": active_free_time_type});
     document.getElementById(str).style["background-color"] = free_time_types_dict[active_free_time_type]["color"];
 
+    redo_history_list.length = 0;
     send_data();
+    update_history_buttons();
 }
 
 function mouse_over_td(str){
@@ -57,7 +67,7 @@ function set_colors(){
         max_key = "1";
         max_value = 0;
         for (const [key, value] of Object.entries(cell_free_time_types_dict)) {
-            if (cell_free_time_types_dict[key] > max_value){
+            if (cell_free_time_types_dict[key] >= max_value){
                 max_value = cell_free_time_types_dict[key];
                 max_key = key;
             }
@@ -65,6 +75,7 @@ function set_colors(){
 
         cells[i].style["background-color"] = free_time_types_dict[max_key]["color"];
     }
+    update_history_buttons();
 }
 
 function choose_table(step_str){
@@ -98,8 +109,70 @@ function choose_filling_pattern(pattern_str){
                     data[key][i] = pattern_str;
                 }
             }
+            set_colors();
+            send_data();
         } else {
+            location.replace(fill_data_with_weekdays_data_url);
         }
+    }
+}
+
+function update_history_buttons(){
+    undo = document.getElementById("btn_arrow_undo");
+    redo = document.getElementById("btn_arrow_redo");
+    console.log(history.length);
+    if (history.length > 0){
+        undo.style["color"] = "#FFFFFF";
+        undo.style["background-color"] = "rgba(255, 255, 255, 0.3)";
+        undo.style["font-size"] = "min(3.2vw, 15px)";
+        undo.style["cursor"] = "pointer";
+    } else {
+        undo.style["color"] = "#888888";
+        undo.style["background-color"] = "rgba(255, 255, 255, 0.1)";
+        undo.style["font-size"] = "min(3.2vw, 15px)";
+        undo.style["cursor"] = "default";
+    }
+    
+    if (redo_history_list.length > 0){
+        redo.style["color"] = "#FFFFFF";
+        redo.style["background-color"] = "rgba(255, 255, 255, 0.3)";
+        redo.style["font-size"] = "min(3.2vw, 15px)";
+        redo.style["cursor"] = "pointer";
+    } else {
+        redo.style["color"] = "#888888";
+        redo.style["background-color"] = "rgba(255, 255, 255, 0.1)";
+        redo.style["font-size"] = "min(3.2vw, 15px)";
+        redo.style["cursor"] = "default";
+    }
+}
+
+function undo_history(){
+    if (history.length > 0){
+        last = history[history.length - 1];
+        start = last["start"];
+        stop = last["stop"];
+        for (i = start; i < stop; ++i){
+            pr = data[last["day_id"]][i];
+            data[last["day_id"]][i] = last["history_data"][i-start];
+        }
+        history.pop();
+        redo_history_list.push(last);
+        set_colors();
+        send_data();
+    }
+}
+
+function redo_history(){
+    if (redo_history_list.length > 0){
+        last = redo_history_list[redo_history_list.length - 1];
+        start = last["start"];
+        stop = last["stop"];
+        for (i = start; i < stop; ++i){
+            pr = data[last["day_id"]][i];
+            data[last["day_id"]][i] = last["act"];
+        }
+        redo_history_list.pop();
+        history.push(last);
         set_colors();
         send_data();
     }

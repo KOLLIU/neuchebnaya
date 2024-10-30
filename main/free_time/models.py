@@ -32,7 +32,6 @@ class FreeTimeEvent(models.Model):
     title = models.CharField(max_length=256, verbose_name="Название")
     description = models.TextField(verbose_name="Описание")
     dates = models.TextField(verbose_name="Даты")
-    weekdays = models.BooleanField(default=False, verbose_name="Регулярное время по неделям")
     start = models.CharField(max_length=5, default="0:00", verbose_name="Начальное время")
     stop = models.CharField(max_length=5, default="23:59", verbose_name="Конечное время")
     steps = models.JSONField(default=get_event_time_steps, verbose_name="Варианты точности")

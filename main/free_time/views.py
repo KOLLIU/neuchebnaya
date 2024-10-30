@@ -1,5 +1,6 @@
 from json import dumps, loads
 
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
@@ -83,5 +84,34 @@ def set_free_time_by_slug(request, free_time_slug):
     return HttpResponse("success")
 
 
-def set_free_time_by_slug_with_weekdays(request):
-    pass
+def set_free_time_by_slug_with_weekdays(request, free_time_slug):
+    if not request.user.is_authenticated:
+        messages.error(request, "Ошибка. Вы должны авторизоваться, чтобы получить данные из таблицы удобного времени по дням недели")
+        return redirect("free_time_by_slug", free_time_slug)
+
+    week_event = FreeTimeEvent.objects.get(id=1)
+    try:
+        free_time_weekdays = FreeTime.objects.get(user=request.user, event=week_event)
+    except:
+        messages.error(request, "Ошибка. Данный пользователь не заполнял таблицу удобного времени по дням недели")
+        return redirect("free_time_by_slug", free_time_slug)
+
+    weekdays_dict = {weekday: free_time_weekdays.data[weekday] for weekday in free_time_weekdays.data}
+
+    free_time = FreeTime.objects.get(slug=free_time_slug)
+    event = free_time.event
+    days = return_days(event.dates)
+
+    data = {}
+    for day in days:
+        day_id = day["id"]
+        weekday = day_id.split(".")[0]
+        data[day_id] = weekdays_dict[weekday]
+    # print(free_time_weekdays.data)
+    # print("\n"*5)
+    # print(data)
+
+    free_time.data = data
+    free_time.save()
+
+    return redirect("free_time_by_slug", free_time_slug)
