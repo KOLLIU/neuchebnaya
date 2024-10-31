@@ -180,3 +180,7 @@ function send_data(){
         console.log(answer);
     });
 }
+
+function dont_show_modal_free_time(){
+
+}

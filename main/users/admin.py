@@ -5,4 +5,4 @@ from users.models import Prep
 
 @admin.register(Prep)
 class PrepAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ("user__last_name", "user__first_name")

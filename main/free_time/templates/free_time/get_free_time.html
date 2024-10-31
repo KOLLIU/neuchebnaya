@@ -21,6 +21,9 @@
     .dropdown_li{
         margin: 10px;
     }
+    body{
+        background-color: #333333
+    }
 </style>
 
 <script>
@@ -41,27 +44,25 @@
 
     data_send_url = "{% url 'set_free_time_by_slug' free_time.slug%}";
     fill_data_with_weekdays_data_url = "{% url 'set_free_time_by_slug_with_weekdays' free_time.slug%}"
-
+    dont_show_free_time_modal = "{% url 'get_event_free_time_by_user' event.id 'dont_show_free_time_modal' %}"
 </script>
 
 {% load static %}
 
 <script src="{% static 'timetable/js/get_free_time.js' %}"></script>
 
-<div style="
-position: -webkit-sticky;
-position:sticky;
-top: 0px; background-color: #212529; z-index:1000;
-padding: 5px;">
+<div style="position: -webkit-sticky; position:sticky; top: 0px;
+    background-color: #212529; z-index:1000;
+    padding: 5px;">
     <div class="container">
         <div style="display:inline-block;" class="unselectable">
             <div style="display:inline-block;">
-                <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseExample"
-                        aria-expanded="false" aria-controls="collapseExample"
-                        style="font-size: min(3.2vw, 20px);">
+                <button type="button" class="btn btn-secondary"
+                        style="font-size: min(3.2vw, 20px);"
+                        data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <i class="bi bi-gear"></i>
                 </button>
+
             </div>
 
             <div class="btn-group">
@@ -96,16 +97,34 @@ padding: 5px;">
             </div>
 
         </div>
+    </div>
+</div>
+<!-- Модальное окно -->
+<div class="modal" id="exampleModal" tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content"
+             style="padding-bottom: 10px; padding-top:10px;
+             border-radius: 10px; background-color: #212529; color: white;">
 
-        <!--Выпадающая менюшка-->
-        <div class="collapse  show container" id="collapseExample"
-             style="background-color: #fff494; padding-bottom: 10px; padding-top:10px; border-radius: 10px;">
-            <h2 align="center"><b>{{event.title}}</b></h2>
-            <p style="text-align: justify; font-size: 1.2rem;"><b>{{event.description}}</b></p>
+            <div class="modal-header">
+                <h2 class="modal-title" id="exampleModalLabel"><b>{{event.title}}</b></h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"
+                style="color: white;"></button>
+            </div>
 
-            <!--Временные интервалы-->
-            <div class="form-control" style="border-radius: 10px;">
-                <h4 align="center">Временные интервалы</h4>
+            <div class="modal-body">
+                {% autoescape off %}
+                <p style="text-align: justify; font-size: 1.2rem;"><b>{{event.description}}</b></p>
+                {% endautoescape %}
+            </div>
+            <div class="modal-footer"></div>
+
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h4 align="center">Временные интервалы</h4>
+                </div>
                 <p style="text-align: justify;">
                     Выбор длины временных интервалов влияет на точность заполнения таблицы. Чем меньше интервал, тем
                     быстрее заполняется таблица, но тем меньше точность её заполнения. Временные интервалы можно
@@ -120,13 +139,13 @@ padding: 5px;">
                     </div>
                     {% endfor %}
                 </div>
-
             </div>
-            <br>
+            <div class="modal-footer"></div>
 
-            <!--Шаблоны заполнения-->
-            <div class="form-control" style="border-radius: 10px;">
-                <h4 align="center">Шаблоны заполнения и пояснения к опциям интервалов</h4>
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h4>Шаблоны заполнения и пояснения к опциям интервалов</h4>
+                </div>
                 <p style="text-align: justify;">Шаблоны заполнения позволяют установить определённое состояние для всех
                     ячеек таблицы разом.
                     {% if event.id != 1%}Также вы можете <b>использовать
@@ -145,47 +164,47 @@ padding: 5px;">
                     </button>
                 </div>
                 {% endif %}
+                <div class="modal-header">
+                    <h4>Закрасить таблицу по шаблону</h4>
+                </div>
 
-                <div class="form-control">
-                    <h4 align="center">Закрасить таблицу по шаблону</h4>
-                    <div class="row">
-                        {% for free_time_type in free_time_types %}
-                        <div class="col-lg"
-                             style="background-color: {{free_time_type.color}};
+                <div class="row">
+                    {% for free_time_type in free_time_types %}
+                    <div class="col-lg"
+                         style="background-color: {{free_time_type.color}};
                              width: 100%;
                              margin: 5px;
                              padding: 10px;
                              border-radius: 10px;
-                             cursor: pointer;"
-                             onclick="choose_filling_pattern(&quot;{{free_time_type.id}}&quot;)">
-                            <h5><b>{{free_time_type.title}}</b></h5>
-                            {{free_time_type.description}}
-                        </div>
-                        {% endfor %}
+                             cursor: pointer;
+                             {% if free_time_type.text_color%}color: {{free_time_type.text_color}}{% endif%}"
+                         onclick="choose_filling_pattern(&quot;{{free_time_type.id}}&quot;)">
+                        <h5><b>{{free_time_type.title}}</b></h5>
+                        {{free_time_type.description}}
                     </div>
-
+                    {% endfor %}
                 </div>
             </div>
 
-            <!--Кнопка отправки-->
-            <div class="d-grid">
-                <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseExample"
-                        aria-expanded="false" aria-controls="collapseExample">
-                    Свернуть подсказку <i class="bi bi-gear"></i>
-                </button>
+            <div class="modal-footer">
+                {% if user.is_authenticated%}
+                <button type="button" class="btn btn-warning" onclick="dont_show_modal_free_time();">Больше не показывать всплывающее окно</button>
+                {% endif %}
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>
             </div>
         </div>
     </div>
-
 </div>
+
 
 <div class="container">
     {% for table in all_tables %}
     <table class="table table-bordered unselectable" id="table_{{table.step}}"
            style="display: none; table-layout: fixed; overflow-x: auto; overflow-y: hidden;
-         -webkit-overflow-scrolling: touch;">
-        <thead>
+            -webkit-overflow-scrolling: touch;
+            background-color: #333333;
+            border-radius: 5px;">
+        <thead  style="background-color: white;">
         <tr>
             {% for day in days%}
             <th scope="col" align="center">{{ day.title }}</th>
@@ -224,6 +243,12 @@ padding: 5px;">
     <script>set_colors();</script>
 
     <script>
+        {% if user.is_authenticated and user.prep.free_time_modal or not user.is_authenticated%}
+        $(window).load(function(){
+        $('#exampleModal').modal('show');
+        });
+        {% endif %}
+
         tables = document.getElementsByClassName("table");
         table = tables[tables.length - 1];
         table.style["display"] = "block";
@@ -235,8 +260,6 @@ padding: 5px;">
 
         document.getElementById("filling_free_time_type").innerHTML = "Выбрать: " + free_time_types_dict[active_free_time_type]["title"]
         document.getElementById("filling_free_time_type").style["background-color"] = free_time_types_dict[active_free_time_type]["color"]
-
     </script>
-
 </div>
 {% endblock main %}

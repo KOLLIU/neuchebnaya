@@ -10,6 +10,7 @@ from users.models import Prep
 def get_token_slug():
     return secrets.token_urlsafe(32)
 
+
 def get_event_time_steps():
     return ["0:05", "0:15", "0:30", "1:00"]
 
@@ -19,6 +20,7 @@ class FreeTimeType(models.Model):
     description = models.TextField(verbose_name="Описание")
     color = models.CharField(max_length=256, verbose_name="Цвет")
     weight = models.IntegerField(verbose_name="Вес")
+    text_color = models.CharField(max_length=256, verbose_name="Цвет текста", null=True, blank=True)
 
     class Meta:
         verbose_name = "Тип свободного времени"

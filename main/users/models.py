@@ -8,6 +8,9 @@ class Prep(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="Пользователь", null=True, blank=True)
     tg_username = models.TextField(max_length=128, verbose_name="телеграм username", null=True, blank=True)
     tg_id = models.BigIntegerField(verbose_name="телеграм id", null=True, blank=True)
+    free_time_modal = models.BooleanField(
+        verbose_name="Показывать модальное окно с подсказками при выборе свободного времени",
+        default=True)
 
     class Meta:
         verbose_name = "Преподаватель"
@@ -15,7 +18,7 @@ class Prep(models.Model):
         ordering = ['user__last_name']
 
     def __str__(self):
-        return f"{self.user.last_name + '. ' if self.user.last_name else ''}{self.user.first_name + ' ' if self.user.first_name else ''}({self.tg_username})"
+        return f"{self.user.last_name + ' ' if self.user.last_name else ''}{self.user.first_name + ' ' if self.user.first_name else ''}({self.tg_username})"
 
 
 @receiver(post_save, sender=User)
