@@ -127,7 +127,7 @@ function update_history_buttons(){
         undo.style["color"] = "#888888";
         undo.style["background-color"] = "rgba(255, 255, 255, 0.1)";
         undo.style["font-size"] = "min(3.2vw, 15px)";
-        undo.style["cursor"] = "default";
+        undo.style["cursor"] = "not-allowed";
     }
     
     if (redo_history_list.length > 0){
@@ -139,7 +139,7 @@ function update_history_buttons(){
         redo.style["color"] = "#888888";
         redo.style["background-color"] = "rgba(255, 255, 255, 0.1)";
         redo.style["font-size"] = "min(3.2vw, 15px)";
-        redo.style["cursor"] = "default";
+        redo.style["cursor"] = "not-allowed";
     }
 }
 

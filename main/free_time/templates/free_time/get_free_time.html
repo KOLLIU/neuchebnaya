@@ -97,6 +97,7 @@ padding: 5px;">
 
         </div>
 
+        <!--Выпадающая менюшка-->
         <div class="collapse  show container" id="collapseExample"
              style="background-color: #fff494; padding-bottom: 10px; padding-top:10px; border-radius: 10px;">
             <h2 align="center"><b>{{event.title}}</b></h2>
@@ -126,10 +127,13 @@ padding: 5px;">
             <!--Шаблоны заполнения-->
             <div class="form-control" style="border-radius: 10px;">
                 <h4 align="center">Шаблоны заполнения и пояснения к опциям интервалов</h4>
-                <p style="text-align: justify;">Шаблоны заполнения позволяют установить определённое состояние для всех ячеек таблицы разом.
+                <p style="text-align: justify;">Шаблоны заполнения позволяют установить определённое состояние для всех
+                    ячеек таблицы разом.
                     {% if event.id != 1%}Также вы можете <b>использовать
-                        данные шаблона из <a href="{% url 'get_event_free_time_by_user' '1' '-'%}">таблицы удобного времени по
-                            дням недели</a></b> и подредактировать его для текущих дат. {% endif %}Установленные данные можно будет отредактировать. Обратите
+                        данные шаблона из <a href="{% url 'get_event_free_time_by_user' '1' '-'%}">таблицы удобного
+                            времени по
+                            дням недели</a></b> и подредактировать его для текущих дат. {% endif %}Установленные данные
+                    можно будет отредактировать. Обратите
                     внимание — использование шаблона ведёт к стиранию предыдущих данных этого ответа и внесению новых.
                     Будьте аккуратны.</p>
 
@@ -151,7 +155,8 @@ padding: 5px;">
                              width: 100%;
                              margin: 5px;
                              padding: 10px;
-                             border-radius: 10px;"
+                             border-radius: 10px;
+                             cursor: pointer;"
                              onclick="choose_filling_pattern(&quot;{{free_time_type.id}}&quot;)">
                             <h5><b>{{free_time_type.title}}</b></h5>
                             {{free_time_type.description}}
