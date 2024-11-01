@@ -1,5 +1,5 @@
 function set_colors(){
-    cells = document.getElementsByClassName("cell")
+    cells = document.getElementsByClassName("prep_time_cell")
     for (i = 0; i < cells.length; ++i) {
         cell = cells[i].id;
         prep_date_time = cell.split("_");
@@ -30,5 +30,29 @@ function set_colors(){
         }
 
         cells[i].style["background-color"] = free_time_types_dict[max_key]["color"];
+    }
+}
+
+function change_days_status(status){
+    cells = document.getElementsByClassName("prep_time_cell")
+    for (i = 0; i < cells.length; ++i) {
+        cells[i].style["display"] = status;
+    }
+    cells = document.getElementsByClassName("time_cell")
+    for (i = 0; i < cells.length; ++i) {
+        cells[i].style["display"] = status;
+    }
+}
+
+function change_day_status(day_id){
+    cells = document.getElementsByClassName("day_" + day_id +"_cell")
+    if (cells[0].style["display"] == "none"){
+        status = "table-cell";
+    } else {
+        status = "none";
+    }
+    console.log("day_" + day_id +"_cell")
+    for (i = 0; i < cells.length; ++i) {
+        cells[i].style["display"] = status;
     }
 }

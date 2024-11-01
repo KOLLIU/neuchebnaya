@@ -120,6 +120,8 @@ def result_free_time_event_by_slug(request, event_slug, step="1:00"):
     for free_time in free_times:
         name = f"{free_time.user.first_name} {free_time.user.last_name}"
         prep_data[name] = free_time.data
+    # for name in range(100):
+    #     prep_data[str(name)] = free_time.data
 
     free_time_types = FreeTimeType.objects.all().order_by("id")
     free_time_types_dict = {str(free_time_type.id): {"color": free_time_type.color,

@@ -40,14 +40,22 @@
     cell_free_time_types_dict["{{free_time_type.id}}"] = 0;
     {% endfor %}
 </script>
-<script src="{% static 'timetable/js/get_free_time_event_result.js' %}"></script>
+<script src="{% static 'timetable/js/get_free_time_event_result.js'%}"></script>
 
 <!--Навигационная менюшка-->
-<div style="position: -webkit-sticky; position:sticky; top: 0px;
-    background-color: #212529; z-index:1000;
-    padding: 5px;">
-    <div class="container">
+<div style=" background-color: #212529; position: sticky;
+      right: 0;
+      left: 0;
+      overflow-x: hide;
+    padding: 5px;" id="navigation_menu">
+    <div class="container-fluid">
         <div style="display:inline-block;" class="unselectable">
+            <button class="btn btn-warning" onclick="change_days_status(&quot;none&quot;)">
+                Свернуть все дни
+            </button>
+            <button class="btn btn-warning" onclick="change_days_status(&quot;table-cell&quot;)">
+                Показать все дни
+            </button>
             <div class="btn-group">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false" id="filling_free_time_type"
@@ -68,51 +76,65 @@
         </div>
     </div>
 </div>
-
 <!--Основная таблица-->
-<div class="container">
-    <table class="table table-bordered unselectable" style="background-color: white;
-     overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; display: block;
-     width: 100%;">
-        <thead style="position: sticky; top: 0px; background-color: black; color:white">
-        <tr>
-            <th style="width: 75px;"></th>
-            {% for day in times%}
-            <th style="font-size: 8px;">
-                <div>
+<div class="container-fluid" style="" id="main_div">
+    <div style="display: block; overflow-x: visible; overflow-y: visible; -webkit-overflow-scrolling: touch;">
+        <table class="table table-bordered unselectable" style="background-color: white; width: 10px;">
+            <thead style="position: sticky; top: 0px; background-color: black; color:white">
+            <tr>
+                <th style="width: 75px;"></th>
+                {% for day in times%}
+                <th style="font-size: 8px;"
+                    onclick="change_day_status(&quot;{{day.id}}&quot;)">
                     {{day.title}}
-                </div>
-            </th>
-            {% for time in day.times%}
-            <th style="font-size: 8px;">
-                <div>
+                </th>
+                {% for time in day.times%}
+                <th style="font-size: 8px;" class="time_cell day_{{day.id}}_cell">
                     {{time}}
-                </div>
-            </th>
-            {% endfor %}
-            {% endfor %}
-        </tr>
-        </thead>
+                </th>
+                {% endfor %}
+                {% endfor %}
+            </tr>
+            </thead>
 
-        <tbody>
+            <tbody>
 
-        {% for prep in prep_data%}
-        <tr>
-            <td style="position: sticky; left: 0; background-color: black; color:white;  font-size: 8px;">
-                {{prep}}
-            </td>
-            {% for day in times%}
-            <td></td>
-            {% for time in day.times %}
-            <td class="cell" id="{{prep}}_{{day.id}}_{{time}}"></td>
+            {% for prep in prep_data%}
+            <tr>
+                <td style="position: sticky; left: 0; background-color: black; color:white;
+                font-size: 8px;">
+                    {{prep}}
+                </td>
+                {% for day in times%}
+                <td></td>
+                {% for time in day.times %}
+                <td class="prep_time_cell day_{{day.id}}_cell" id="{{prep}}_{{day.id}}_{{time}}"></td>
+                {% endfor %}
+                {% endfor %}
+            </tr>
             {% endfor %}
-            {% endfor %}
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<script>set_colors();</script>
+<script>
+    set_colors();
+
+
+    navbar = document.getElementById("navbar_div");
+    navbar.style["position"] = 'fixed';
+    navbar.style["top"] = "0px";
+    navbar.style["left"] = "0px";
+
+    menu = document.getElementById("navigation_menu");
+    menu.style["position"] = 'fixed';
+    menu.style["top"] = String(navbar.offsetHeight) + "px";
+    menu.style["left"] = "0px";
+
+    element = document.getElementById("main_div");
+    element.style["position"] = 'absolute';
+    element.style["top"] = String(navbar.offsetHeight + menu.offsetHeight) + "px";
+</script>
 
 {% endblock main %}
