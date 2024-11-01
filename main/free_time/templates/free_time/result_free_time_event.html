@@ -22,6 +22,7 @@
         position:sticky;
         background-color: black;
         color: white;
+        min-width: 23px
     }
 </style>
 
@@ -41,19 +42,49 @@
 </script>
 <script src="{% static 'timetable/js/get_free_time_event_result.js' %}"></script>
 
+<!--Навигационная менюшка-->
+<div style="position: -webkit-sticky; position:sticky; top: 0px;
+    background-color: #212529; z-index:1000;
+    padding: 5px;">
+    <div class="container">
+        <div style="display:inline-block;" class="unselectable">
+            <div class="btn-group">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false" id="filling_free_time_type"
+                        style="font-size: min(3.2vw, 20px);">
+                    Шаг
+                </button>
+                <ul class="dropdown-menu" style="width: 100%;">
+                    {% for step in steps %}
+                    <li class="d-grid dropdown_li">
+                        <a href="{% url 'result_free_time_event_by_slug' event.slug step %}"
+                           class="btn {% if active_step == step %}btn-primary{% else %}btn-danger{% endif %}">
+                            {{step}}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Основная таблица-->
 <div class="container">
-    <table class="table table-bordered unselectable" style="background-color: white;">
+    <table class="table table-bordered unselectable" style="background-color: white;
+     overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; display: block;
+     width: 100%;">
         <thead style="position: sticky; top: 0px; background-color: black; color:white">
         <tr>
-            <th align="center"></th>
+            <th style="width: 75px;"></th>
             {% for day in times%}
-            <th>
+            <th style="font-size: 8px;">
                 <div>
                     {{day.title}}
                 </div>
             </th>
             {% for time in day.times%}
-            <th>
+            <th style="font-size: 8px;">
                 <div>
                     {{time}}
                 </div>
@@ -67,13 +98,13 @@
 
         {% for prep in prep_data%}
         <tr>
-            <td style="position: sticky; left: 0; background-color: black; color:white">
+            <td style="position: sticky; left: 0; background-color: black; color:white;  font-size: 8px;">
                 {{prep}}
             </td>
             {% for day in times%}
             <td></td>
             {% for time in day.times %}
-            <td class="cell" id="{{prep}}_{{day.id}}_{{time}}">{{time}}</td>
+            <td class="cell" id="{{prep}}_{{day.id}}_{{time}}"></td>
             {% endfor %}
             {% endfor %}
         </tr>

@@ -130,6 +130,8 @@ def result_free_time_event_by_slug(request, event_slug, step="1:00"):
     context = {"times": times, "prep_data": prep_data,
                "prep_data_dict": dumps(prep_data, indent=None),
                "free_time_types": free_time_types,
-               "free_time_types_dict": free_time_types_dict
+               "free_time_types_dict": free_time_types_dict,
+               "steps": event.steps, "active_step": step,
+               "event": event
                }
     return render(request, "free_time/result_free_time_event.html", context=context)
