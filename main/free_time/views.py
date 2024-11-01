@@ -1,11 +1,12 @@
 from json import dumps, loads
+from random import randint
 
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from free_time.models import FreeTime, FreeTimeType, FreeTimeEvent
-from free_time.utils import weekdays_short, return_days
+from free_time.utils import weekdays_short, return_days, get_data_for_event_from_weekdays, get_times_from_start_and_stop
 
 
 # Create your views here.
@@ -15,16 +16,20 @@ def index(request):
     return HttpResponse("success")
 
 
-def get_event_free_time_without_user(request, event_id):
-    context = {"event_id": event_id}
+def get_event_free_time_without_user(request, event_slug):
+    context = {"event_slug": event_slug}
     return render(request, "free_time/get_event_free_time_without_user.html", context=context)
 
 
-def get_event_free_time_by_user(request, event_id, name="-"):
+def get_event_free_time_by_user(request, event_slug, name="-"):
     if not request.user.is_authenticated and name == "-":
-        return redirect("get_event_free_time_without_user", event_id)
+        return redirect("get_event_free_time_without_user", event_slug)
 
-    event = FreeTimeEvent.objects.get(id=event_id)
+    if name == "dont_show_free_time_modal":
+        request.user.prep.free_time_modal = False
+        request.user.save()
+
+    event = FreeTimeEvent.objects.get(slug=event_slug)
     try:
         free_time_answer = FreeTime.objects.get(event=event, user=request.user)
     except:
@@ -42,19 +47,13 @@ def free_time_by_slug(request, free_time_slug):
     free_time = FreeTime.objects.get(slug=free_time_slug)
     event = free_time.event
     days = return_days(event.dates)
-
-    start = int(event.start.split(":")[0]) * 60 + int(event.start.split(":")[1])
-    stop = int(event.stop.split(":")[0]) * 60 + int(event.stop.split(":")[1])
-
     steps = event.steps
 
     all_tables = []
     for step in steps:
-        s = int(step.split(":")[0]) * 60 + int(step.split(":")[1])
         all_tables.append({
             "step": step,
-            "times": [f"{time // 60:0>2}:{time % 60:0>2}-{(time + s) // 60:0>2}:{(time + s) % 60:0>2}"
-                      for time in range(start, stop, s)]
+            "times": get_times_from_start_and_stop(start=event.start, stop=event.stop, step=step)
         })
 
     data = free_time.data
@@ -86,7 +85,8 @@ def set_free_time_by_slug(request, free_time_slug):
 
 def set_free_time_by_slug_with_weekdays(request, free_time_slug):
     if not request.user.is_authenticated:
-        messages.error(request, "Ошибка. Вы должны авторизоваться, чтобы получить данные из таблицы удобного времени по дням недели")
+        messages.error(request,
+                       "Ошибка. Вы должны авторизоваться, чтобы получить данные из таблицы удобного времени по дням недели")
         return redirect("free_time_by_slug", free_time_slug)
 
     week_event = FreeTimeEvent.objects.get(id=1)
@@ -96,22 +96,40 @@ def set_free_time_by_slug_with_weekdays(request, free_time_slug):
         messages.error(request, "Ошибка. Данный пользователь не заполнял таблицу удобного времени по дням недели")
         return redirect("free_time_by_slug", free_time_slug)
 
-    weekdays_dict = {weekday: free_time_weekdays.data[weekday] for weekday in free_time_weekdays.data}
-
     free_time = FreeTime.objects.get(slug=free_time_slug)
-    event = free_time.event
-    days = return_days(event.dates)
 
-    data = {}
-    for day in days:
-        day_id = day["id"]
-        weekday = day_id.split(".")[0]
-        data[day_id] = weekdays_dict[weekday]
-    # print(free_time_weekdays.data)
-    # print("\n"*5)
-    # print(data)
+    data = get_data_for_event_from_weekdays(free_time_weekdays, free_time)
 
     free_time.data = data
     free_time.save()
 
     return redirect("free_time_by_slug", free_time_slug)
+
+
+def result_free_time_event_by_slug(request, event_slug, step="1:00"):
+    event = FreeTimeEvent.objects.get(slug=event_slug)
+    days = return_days(event.dates)
+    times = []
+    time_list = get_times_from_start_and_stop(start=event.start, stop=event.stop, step=step)
+    for day in days:
+        times.append({"id": day["id"], "title": day["title"], "times": time_list})
+
+    free_times = FreeTime.objects.filter(event=event)
+
+    prep_data = {}
+    for free_time in free_times:
+        name = f"{free_time.user.first_name} {free_time.user.last_name}"
+        prep_data[name] = free_time.data
+
+    free_time_types = FreeTimeType.objects.all().order_by("id")
+    free_time_types_dict = {str(free_time_type.id): {"color": free_time_type.color,
+                                                     "title": free_time_type.title} for free_time_type in
+                            free_time_types}
+    free_time_types_dict = dumps(free_time_types_dict, indent=None)
+
+    context = {"times": times, "prep_data": prep_data,
+               "prep_data_dict": dumps(prep_data, indent=None),
+               "free_time_types": free_time_types,
+               "free_time_types_dict": free_time_types_dict
+               }
+    return render(request, "free_time/result_free_time_event.html", context=context)

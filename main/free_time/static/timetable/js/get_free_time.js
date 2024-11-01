@@ -83,12 +83,12 @@ function choose_table(step_str){
         tables[i].style["display"] = "none";
     }
     for (i = 0; i < table_buttons.length; ++i) {
-        table_buttons[i].classList.remove('btn-danger');
+        table_buttons[i].classList.remove('btn-secondary');
         table_buttons[i].classList.remove('btn-primary');
-        table_buttons[i].classList.add('btn-danger')
+        table_buttons[i].classList.add('btn-secondary')
     }
     document.getElementById("table_" + step_str).style["display"] = "block";
-    document.getElementById("table_button_" + step_str).classList.remove('btn-danger');
+    document.getElementById("table_button_" + step_str).classList.remove('btn-secondary');
     document.getElementById("table_button_" + step_str).classList.add('btn-primary')
     set_colors();
 }
@@ -182,5 +182,7 @@ function send_data(){
 }
 
 function dont_show_modal_free_time(){
-
+    if (window.confirm("(Если вы читаете это, вы только начали работу с сервисом или произошло изменение правил работы с таблицами) Вы действительно не хотите видеть инструкцию по работе с сервисом? Вы полностью прочитали текст и поняли его? Тогда я очень рад. Спасибо! Окно больше не будет вас беспокоить, но его всегда можно вызвать кнопкой настроек")) {
+        location.replace(dont_show_free_time_modal);
+    }
 }

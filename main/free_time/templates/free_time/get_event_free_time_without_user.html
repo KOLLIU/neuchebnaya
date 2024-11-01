@@ -7,7 +7,7 @@
 <script>
     function send(){
         name = document.getElementById("name_input").value;
-        url = "{% url 'get_event_free_time_by_user_with_name' event_id%}" + "/" + name;
+        url = "{% url 'get_event_free_time_by_user_with_name' event_slug%}" + "/" + name;
         console.log(url);
         location.replace(url);
     }

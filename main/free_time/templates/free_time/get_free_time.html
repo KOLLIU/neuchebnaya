@@ -2,9 +2,6 @@
 
 {% block main %}
 <style>
-    body {
-        background-color: #FFFFFF;
-    }
     .unselectable {
       -moz-user-select: none;
       -khtml-user-select: none;
@@ -44,7 +41,7 @@
 
     data_send_url = "{% url 'set_free_time_by_slug' free_time.slug%}";
     fill_data_with_weekdays_data_url = "{% url 'set_free_time_by_slug_with_weekdays' free_time.slug%}"
-    dont_show_free_time_modal = "{% url 'get_event_free_time_by_user' event.id 'dont_show_free_time_modal' %}"
+    dont_show_free_time_modal = "{% url 'get_event_free_time_by_user' event.slug 'dont_show_free_time_modal' %}"
 </script>
 
 {% load static %}
@@ -109,9 +106,13 @@
              border-radius: 10px; background-color: #212529; color: white;">
 
             <div class="modal-header">
-                <h2 class="modal-title" id="exampleModalLabel"><b>{{event.title}}</b></h2>
+                <h2 class="modal-title" id="exampleModalLabel"><b>{{event.title}}</b>
+                    <a class="btn btn-success" href="{% url 'result_free_time_event_by_slug' event.slug '1:00'%}">
+                        Все ответы <i class="bi bi-list"></i>
+                    </a>
+                </h2>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"
-                style="color: white;"></button>
+                        style="color: white;"></button>
             </div>
 
             <div class="modal-body">
@@ -132,7 +133,7 @@
                     можно дозаполнить более аккуратно, используя интервалы с меньшей длиной.</p>
                 <div class="row">
                     {% for table in all_tables %}
-                    <div class="btn btn-danger table_button col"
+                    <div class="btn btn-secondary table_button col"
                          id="table_button_{{table.step}}"
                          style="margin: 5px;"
                          onclick="choose_table(&quot;{{table.step}}&quot;)">{{table.step}}
@@ -149,7 +150,9 @@
                 <p style="text-align: justify;">Шаблоны заполнения позволяют установить определённое состояние для всех
                     ячеек таблицы разом.
                     {% if event.id != 1%}Также вы можете <b>использовать
-                        данные шаблона из <a href="{% url 'get_event_free_time_by_user' '1' '-'%}">таблицы удобного
+                        данные шаблона из <a
+                                href="{% url 'get_event_free_time_by_user' '7FZzdbIs3Mab2FTMt2xlMULbp38t2yAko53Mxi5l-DU123' '-'%}">таблицы
+                            удобного
                             времени по
                             дням недели</a></b> и подредактировать его для текущих дат. {% endif %}Установленные данные
                     можно будет отредактировать. Обратите
@@ -188,7 +191,9 @@
 
             <div class="modal-footer">
                 {% if user.is_authenticated%}
-                <button type="button" class="btn btn-warning" onclick="dont_show_modal_free_time();">Больше не показывать всплывающее окно</button>
+                <button type="button" class="btn btn-warning" onclick="dont_show_modal_free_time();">Больше не
+                    показывать всплывающее окно
+                </button>
                 {% endif %}
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Закрыть</button>
             </div>
@@ -202,9 +207,8 @@
     <table class="table table-bordered unselectable" id="table_{{table.step}}"
            style="display: none; table-layout: fixed; overflow-x: auto; overflow-y: hidden;
             -webkit-overflow-scrolling: touch;
-            background-color: #333333;
-            border-radius: 5px;">
-        <thead  style="background-color: white;">
+            background-color: #333333;">
+        <thead style="background-color: white;">
         <tr>
             {% for day in days%}
             <th scope="col" align="center">{{ day.title }}</th>
@@ -234,7 +238,7 @@
     </table>
     {% endfor %}
     <div class="d-grid">
-        <button class="btn btn-success" onclick="alert('Вы невероятны! Спасибо');">Сохранить. Вообще это не обязательно,
+        <button class="btn btn-primary" onclick="alert('Вы невероятны! Спасибо');">Сохранить. Вообще это не обязательно,
             данные сохраняются в процессе
             редактирования. Но так спокойней, верно?
         </button>
@@ -255,7 +259,7 @@
 
         table_buttons = document.getElementsByClassName("table_button");
         button = table_buttons[table_buttons.length - 1];
-        button.classList.remove( 'btn-danger' );
+        button.classList.remove('btn-secondary');
         button.classList.add('btn-primary')
 
         document.getElementById("filling_free_time_type").innerHTML = "Выбрать: " + free_time_types_dict[active_free_time_type]["title"]

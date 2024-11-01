@@ -1,0 +1,87 @@
+{% extends "base.html"%}
+
+{% load static %}
+
+{% block main %}
+
+<style>
+    body{
+        background-color: #333333
+    }
+    .unselectable {
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .cell_head {
+        font-size: 8px;
+        width: 23px;
+    }
+    .table_header {
+        position:sticky;
+        background-color: black;
+        color: white;
+    }
+</style>
+
+<script>
+    pattern = /&quot;/g;
+
+    prep_data_dict = '{{prep_data_dict}}'.replace(pattern, '"');
+    prep_data_dict = JSON.parse(prep_data_dict);
+
+    free_time_types_dict = '{{free_time_types_dict}}'.replace(pattern, '"');
+    free_time_types_dict = JSON.parse(free_time_types_dict);
+
+    cell_free_time_types_dict = {};
+    {% for free_time_type in free_time_types %}
+    cell_free_time_types_dict["{{free_time_type.id}}"] = 0;
+    {% endfor %}
+</script>
+<script src="{% static 'timetable/js/get_free_time_event_result.js' %}"></script>
+
+<div class="container">
+    <table class="table table-bordered unselectable" style="background-color: white;">
+        <thead style="position: sticky; top: 0px; background-color: black; color:white">
+        <tr>
+            <th align="center"></th>
+            {% for day in times%}
+            <th>
+                <div>
+                    {{day.title}}
+                </div>
+            </th>
+            {% for time in day.times%}
+            <th>
+                <div>
+                    {{time}}
+                </div>
+            </th>
+            {% endfor %}
+            {% endfor %}
+        </tr>
+        </thead>
+
+        <tbody>
+
+        {% for prep in prep_data%}
+        <tr>
+            <td style="position: sticky; left: 0; background-color: black; color:white">
+                {{prep}}
+            </td>
+            {% for day in times%}
+            <td></td>
+            {% for time in day.times %}
+            <td class="cell" id="{{prep}}_{{day.id}}_{{time}}">{{time}}</td>
+            {% endfor %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>set_colors();</script>
+
+{% endblock main %}

@@ -1,3 +1,4 @@
+import random
 import secrets
 
 from django.contrib.auth.models import User
@@ -38,6 +39,10 @@ class FreeTimeEvent(models.Model):
     stop = models.CharField(max_length=5, default="23:59", verbose_name="Конечное время")
     steps = models.JSONField(default=get_event_time_steps, verbose_name="Варианты точности")
     default_free_time_type = models.ForeignKey(FreeTimeType, on_delete=models.SET_NULL, null=True)
+    slug = models.SlugField(max_length=255,
+                            default=get_token_slug,
+                            unique=True, db_index=True, verbose_name="URL",
+                            editable=False, blank=False)
 
     class Meta:
         verbose_name = "Событие"
@@ -45,6 +50,9 @@ class FreeTimeEvent(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+    def get_absolute_url(self):
+        return reverse('result_free_time_event_by_slug', kwargs={'event_slug': self.slug, "step": "2:00"})
 
 
 class FreeTime(models.Model):
